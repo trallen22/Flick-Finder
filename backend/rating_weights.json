@@ -1,0 +1,79 @@
+{
+    "Title": {
+        "Prometheus": "liked",
+        "Sing": "liked",
+        "Trolls": "disliked",
+        "The Dark Knight": "liked",
+        "The Prestige": "liked"
+    },
+    "Genre": {
+        "Adventure": 0,
+        "Mystery": 2,
+        "Sci-Fi": 2,
+        "Animation": 0,
+        "Comedy": 0,
+        "Family": 1,
+        "Action": 1,
+        "Crime": 1,
+        "Drama": 2
+    },
+    "Director": {
+        "Ridley Scott": 1,
+        "Christophe Lourdelet": 1,
+        "Walt Dohrn": -1,
+        "Christopher Nolan": 2
+    },
+    "Actors": {
+        "Noomi Rapace": 1,
+        "Logan Marshall-Green": 1,
+        "Michael Fassbender": 1,
+        "Charlize Theron": 1,
+        "Matthew McConaughey": 1,
+        "Reese Witherspoon": 1,
+        "Seth MacFarlane": 1,
+        "Scarlett Johansson": 2,
+        "Anna Kendrick": -1,
+        "Justin Timberlake": -1,
+        "Zooey Deschanel": -1,
+        "Christopher Mintz-Plasse": -1,
+        "Christian Bale": 2,
+        "Heath Ledger": 1,
+        "Aaron Eckhart": 1,
+        "Michael Caine": 2,
+        "Hugh Jackman": 1
+    },
+    "Year": {
+        "2012": 1,
+        "2016": 0,
+        "2008": 1,
+        "2006": 1
+    },
+    "Runtime (Minutes)": {
+        "124": 1,
+        "108": 1,
+        "92": -1,
+        "152": 1,
+        "130": 1
+    },
+    "Rating": {
+        "7.0": 1,
+        "7.2": 1,
+        "6.5": -1,
+        "9.0": 1,
+        "8.5": 1
+    },
+    "Revenue (Millions)": {
+        "126.46": 1,
+        "270.32": 1,
+        "153.69": -1,
+        "533.32": 1,
+        "53.08": 1
+    },
+    "Metascore": {
+        "65.0": 1,
+        "59.0": 1,
+        "56.0": -1,
+        "82.0": 1,
+        "66.0": 1
+    }
+}

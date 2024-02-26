@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_restful import Resource, Api
 
-from backend_funcs import top_recommendations, get_movie_by_name
+from backend_movie_funcs import top_recommendations, get_movie_by_name
 
 app = Flask(__name__)
 api = Api(app)

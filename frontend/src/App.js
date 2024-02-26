@@ -15,8 +15,8 @@ import TopRecommendations from './pages/top-recommendations';
 function App() {
 
 	return (
-		<Router>
-			<div className="App">
+		<div className="App">
+			<Router>
 				<Navbar />
 				<Routes>
 					<Route
@@ -32,8 +32,8 @@ function App() {
 						element={<Movie />}
 					></Route>
 				</Routes>
-			</div>
-		</Router>
+			</Router>
+		</div>
 	);
 }
 

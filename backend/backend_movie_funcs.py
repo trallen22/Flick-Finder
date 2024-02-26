@@ -29,9 +29,11 @@ def get_movie_by_name(movieName:str) -> dict:
 		curMovie = curMovies[0]
 		movieDict = {"title":curMovie["title"], 
 					"description":curMovie["description"],
-					"genre":curMovie["genres"]}
+					"genre":curMovie['genres']}
 	except IndexError:
-		movieDict = {"title":f"no movie found with title '{movieName}'", "description":"no description available"}
+		movieDict = {"title":f"no movie found with title '{movieName}'", 
+					"description":"no description available", 
+					"genre":"no genres available"}
 	return movieDict
 
 # top_recommendations: returns a dictionary of the 

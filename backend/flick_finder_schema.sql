@@ -1,13 +1,32 @@
 -- Tristan Allen, Will Cox, and Daniel Carter 
-DROP SCHEMA IF EXISTS FlickFinder;
-CREATE SCHEMA FlickFinder;
-
-USE FlickFinder;
-
-CREATE TABLE movies
-	(movieId 	INT NOT NULL, 
-	title		VARCHAR(120), -- longest is 105
-	genres		VARCHAR(100), -- longest is 98 
-	description	VARCHAR(1000), -- longest is 1000 
-	keywords	VARCHAR(1950) -- longest is 1901
+drop schema if exists flickfinder;
+create schema flickfinder;
+use flickfinder;
+create table movies (
+	movie_id         NUMERIC(6, 0),
+	title      VARCHAR(100),
+	genre      VARCHAR(1000),
+	overview   VARCHAR(1000),
+	keywords   VARCHAR(5000),
+	duration   INT,
+	release_date DATE,
+	primary key (movie_id)
 	);
+	
+create table users (
+	user_id   VARCHAR(50),
+	pword     VARCHAR(50),  #how to encrypt
+	email     VARCHAR(100),
+	reg_date  DATE,
+	primary key (user_id)
+);
+
+create table reviews (
+	user_id  VARCHAR(50),
+	movie_id NUMERIC(6,0),
+	rating   INT,
+	rate_date DATE,
+	primary key (user_id, movie_id),
+	foreign key (user_id) references users(user_id),
+	foreign key (movie_id) references movies(movie_id)
+);

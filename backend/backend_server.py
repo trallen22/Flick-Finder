@@ -1,10 +1,11 @@
+from pydoc import describe
 from flask import Flask, request, jsonify, redirect, url_for
 from flask_cors import CORS
 from flask_restful import Resource, Api
 from flask_bcrypt import Bcrypt
-from flask_login import UserMixin, LoginManager, login_required, login_user, logout_user, current_user
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
-
+from user import User
 from backend_movie_funcs import top_recommendations, get_movie_by_name, sql_query
 
 app = Flask(__name__)
@@ -20,14 +21,7 @@ CORS(app)
 bcrypt = Bcrypt(app)
 mysql = MySQL(app)
 login_manager = LoginManager(app)
-login_manager.login_view = "sign-up"
-
-class User(UserMixin):
-    def __init__(self, id, name, active=True):
-        self.id = id
-        self.name = name
-        self.active = active
-
+login_manager.login_view = "/sign-up"
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -74,6 +68,10 @@ class GetUser(Resource):
         return userStatus
 
 class SignUp(Resource):
+    def get(self):
+        return jsonify({"movie0": { "title": "no title for movie 1", "description": "no description" }, 
+                "movie1": { "title": "no title for movie 2", "description": "no description" }, 
+                "movie2": { "title": "no title for movie 3", "description": "no description" }})
     def post(self):
         jsonData = request.get_json()
         username = jsonData["username"]

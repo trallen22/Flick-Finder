@@ -38,25 +38,28 @@ function LoginPage(){
 	return (
 
 		<div className="App">
-			<form>
-				<div className="App-header">
-				<label>Username: </label>
-				<input
-					type="text"
-					value={username}
-					onChange={(e) => setUsername(e.target.value)}
-				/>
-				<label>Password: </label>
-				<input
-					type="password"
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-				/>
-				<button type="button" onClick={() => logInUser()}>
-				Submit
-				</button>
-				</div>
-			</form>
+			<div className="App-header">
+				<h1>
+					Login
+				</h1>
+				<form>
+					<label>Username: </label>
+					<input
+						type="text"
+						value={username}
+						onChange={(e) => setUsername(e.target.value)}
+					/>
+					<label>Password: </label>
+					<input
+						type="password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+					/>
+					<button type="button" onClick={() => logInUser()}>
+					Submit
+					</button>
+				</form>
+			</div>
 		</div>
 	);
 };

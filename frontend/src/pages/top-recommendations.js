@@ -14,6 +14,7 @@ function TopRecommendations() {
 
     useEffect(() => {
         fetch("/top-recommendations").then((res) => {
+            console.log(res);
             res.json().then((data) => {
                 // Setting a data from api
                 setMovieData(data);

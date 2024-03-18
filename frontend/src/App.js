@@ -13,11 +13,10 @@ import Home from './pages/home';
 import TopRecommendations from './pages/top-recommendations';
 import SignUp from './pages/signup';
 import LoginPage from './pages/login';
+import Logout from './pages/logout';
 
 
 function App() {
-
-
 
 	return (
 		<div className="App">
@@ -46,7 +45,7 @@ function App() {
 					></Route>
 					<Route
 						exact path="/logout"
-						element={<Navigate to="/" />}
+						element={<Logout />}
 					></Route>
 					<Route
 						exact path="/user"

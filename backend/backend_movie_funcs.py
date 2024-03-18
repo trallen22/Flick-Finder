@@ -13,9 +13,11 @@ def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 		sys.exit()
 	cursor = connection.cursor()
 	cursor.execute(sqlString, sqlTuple)
-	fetched = cursor.fetchall()
-	columns = [col[0] for col in cursor.description]
-	curMovies = [dict(zip(columns, row)) for row in fetched]
+	curMovies = []
+	if (sqlString.split()[0] == 'SELECT'):
+		fetched = cursor.fetchall()
+		columns = [col[0] for col in cursor.description]
+		curMovies = [dict(zip(columns, row)) for row in fetched]
 	connection.commit()
 	cursor.close()
 	return curMovies
@@ -48,3 +50,6 @@ def top_recommendations() -> dict:
 	for i in range(len(listMovies)):
 		movieDict[f"movie{i}"] = get_movie_by_name(listMovies[i])
 	return movieDict
+
+def check_user_credentials() -> dict:
+	return 

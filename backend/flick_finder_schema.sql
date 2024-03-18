@@ -15,7 +15,8 @@ create table movies (
 	
 create table users (
 	user_id   VARCHAR(50),
-	pword     VARCHAR(50),  #how to encrypt
+	username 	VARCHAR(50),
+	password     VARCHAR(50),  # how to encrypt
 	email     VARCHAR(100),
 	reg_date  DATE,
 	primary key (user_id)

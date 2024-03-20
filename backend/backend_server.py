@@ -1,4 +1,3 @@
-from pydoc import describe
 from flask import Flask, request, jsonify, redirect, url_for
 from flask_cors import CORS
 from flask_restful import Resource, Api
@@ -78,7 +77,7 @@ class SignUp(Resource):
         password = jsonData["password"]
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         sql_query("INSERT INTO users VALUES (%s, %s, %s)", (None, username, hashed_password))
-        return {}
+        return { "status": "success" }
 
 class Movie(Resource):
     def get(self, movieName:str):
@@ -88,6 +87,11 @@ class TopRecommendations(Resource):
     @login_required
     def get(self):
         return top_recommendations()
+
+class RateMovie(Resource):
+    def post(self):
+        jsonData = request.json()
+
 
 api.add_resource(TopRecommendations, "/top-recommendations")
 api.add_resource(Movie, "/movie/<movieName>")

@@ -74,10 +74,15 @@ class SignUp(Resource):
     def post(self):
         jsonData = request.get_json()
         username = jsonData["username"]
-        password = jsonData["password"]
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        sql_query("INSERT INTO users VALUES (%s, %s, %s)", (None, username, hashed_password))
-        return { "status": "success" }
+        duplicateUser = sql_query("SELECT * FROM users WHERE username=%s", (username,))
+        if len(duplicateUser):
+            retStatus = { "status": "failed", "details": "username already taken" }
+        else: 
+            password = jsonData["password"]
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            sql_query("INSERT INTO users VALUES (%s, %s, %s)", (None, username, hashed_password))
+            retStatus = { "status": "success", "details": "user successfully signed up"}
+        return retStatus
 
 class Movie(Resource):
     def get(self, movieName:str):

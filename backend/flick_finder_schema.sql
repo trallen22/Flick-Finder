@@ -19,7 +19,7 @@ create table users (
 	user_id   INT NOT NULL AUTO_INCREMENT,
 	username 	VARCHAR(50) NOT NULL,
 	password     VARCHAR(60) NOT NULL,  
-	-- email     VARCHAR(100),
+	email     VARCHAR(100),
 	-- reg_date  DATE,
 	primary key (user_id)
 );

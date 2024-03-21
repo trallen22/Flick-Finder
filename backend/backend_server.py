@@ -73,16 +73,22 @@ class SignUp(Resource):
                 "movie2": { "title": "no title for movie 3", "description": "no description" }})
     def post(self):
         jsonData = request.get_json()
+        # TODO: need to add exception handling for KeyError
         username = jsonData["username"]
-        duplicateUser = sql_query("SELECT * FROM users WHERE username=%s", (username,))
-        if len(duplicateUser):
+        email = jsonData["email"]
+        password = jsonData["password"]
+        if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
             retStatus = { "status": "failed", "details": "username already taken" }
+        elif len(sql_query("SELECT * FROM users WHERE email=%s", (email,))):
+            retStatus = { "status": "failed", "details": "email already taken" }
         else: 
-            password = jsonData["password"]
             hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            sql_query("INSERT INTO users VALUES (%s, %s, %s)", (None, username, hashed_password))
-            retStatus = { "status": "success", "details": "user successfully signed up"}
-        return retStatus
+            try:
+                sql_query("INSERT INTO users VALUES (%s, %s, %s, %s)", (None, username, hashed_password, email))
+                retStatus = { "status": "success", "details": "user successfully signed up"}
+            except Exception:
+                retStatus = { "status": "failed", "details": "error reaching database" }
+        return retStatus    
 
 class Movie(Resource):
     def get(self, movieName:str):

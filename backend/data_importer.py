@@ -17,6 +17,7 @@ USER = 'root'
 DATABASE = "FlickFinder"
 META_FILENAME = "movie-data-csv/movies_metadata.csv"
 KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
+CREDITS_FILENAME = "movie-data-csv/credits.csv"
 # PASSWORD = '123456'
 
 
@@ -49,13 +50,19 @@ except Exception as e:
 
 cursor = connection.cursor()
 
-with open(META_FILENAME, 'r', encoding='utf-8-sig') as metaFile, open(KEYWORD_FILENAME, 'r', encoding='utf-8-sig') as keywordFile:
+with open(META_FILENAME, 'r', encoding='utf-8-sig') as metaFile, \
+open(KEYWORD_FILENAME, 'r', encoding='utf-8-sig') as keywordFile, \
+open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 	metaCsv = csv.DictReader(metaFile)
 	keywordCsv = csv.DictReader(keywordFile)
+	creditsCsv = csv.DictReader(creditsFile)
 
 	pbar = tqdm(desc='GOING MOVIE BY MOVIE', total=45467) # progress bar to total number of rows in the file 
 
-	for mRow, kRow in zip(metaCsv, keywordCsv):
+	for mRow, kRow, cRow in zip(metaCsv, keywordCsv, creditsCsv):
+		if cRow['id'] != mRow['id'] or kRow['id'] != mRow['id']: # TODO: need to clean this up
+			# print(f"m: {mRow['id']}, k: {kRow['id']}, c: {cRow['id']}")
+			pass
 		# id/title
 		curId = mRow["id"]
 		curTitle = mRow["title"]
@@ -65,6 +72,12 @@ with open(META_FILENAME, 'r', encoding='utf-8-sig') as metaFile, open(KEYWORD_FI
 		for genre in listGenres:
 			curGenres.append(genre["name"])
 		curGenres = f"{curGenres}"
+		# cast 
+		listCast = eval(cRow["cast"])
+		curCast = []
+		for character in listCast:
+			curCast.append(character["name"])
+		curCast = f"{curCast}"
 		# description (overview)
 		curOverview = mRow["overview"]
 		# keywords 
@@ -77,7 +90,7 @@ with open(META_FILENAME, 'r', encoding='utf-8-sig') as metaFile, open(KEYWORD_FI
 		curRuntime = mRow["runtime"] if mRow["runtime"] != '' else -1
 		# release date
 		curReleaseDate = mRow["release_date"] if mRow["release_date"] != '' else '0001-01-01'
-		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curOverview, curKeywords, curRuntime, curReleaseDate))
+		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curOverview, curKeywords, curRuntime, curReleaseDate))
 		pbar.update(1)
 		
 connection.commit()
@@ -105,4 +118,4 @@ def remove_duplicates_by_column(input_file, output_file, column_name):
                 writer.writerow(row)
 
 # Example usage: Removing duplicates from 'input.csv' based on the 'column_name' and writing to 'output.csv'
-# remove_duplicates_by_column('movie-data-csv/test.csv', 'movie-data-csv/test2.csv', 'id')
+# remove_duplicates_by_column('movie-data-csv/credits.csv', 'movie-data-csv/credits2.csv', 'id')

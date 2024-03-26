@@ -51,5 +51,19 @@ def top_recommendations() -> dict:
 		movieDict[f"movie{i}"] = get_movie_by_name(listMovies[i])
 	return movieDict
 
-def check_user_credentials() -> dict:
+# puts the user rating and associated movie information into the reviews table
+def rate_movie(movieName:str, userId:int, userRating:float) -> None:
+	movieTitle = movieName.replace('_', ' ')
+	movieStr = "SELECT movie_id FROM movies WHERE title=%s;"
+	movieInfo = sql_query(movieStr, (movieTitle,))[0]
+	checkStr = "SELECT * FROM reviews WHERE movie_id=%s AND user_id=%s;"
+	check = sql_query(checkStr, (movieInfo["movie_id"], userId))
+	if len(check):
+		updateStr = "UPDATE reviews SET rating=%s WHERE movie_id=%s;"
+		sql_query(updateStr, (userRating, movieInfo["movie_id"]))
+	else:
+		rateStr = "INSERT INTO reviews VALUES (%s, %s, %s, %s)"
+		sql_query(rateStr, (userId, movieInfo['movie_id'], userRating, '0000-01-01'))
 	return 
+
+# print(rate_movie('prometheus', 1, 4.5))

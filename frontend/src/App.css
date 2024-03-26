@@ -7,12 +7,12 @@
   pointer-events: none;
 }
 
-.profile-container{
+.profile-header{
   align-items: center;
   text-align: center;
   color: white;
-  background-color: #657c68;
-  height: 350px;
+  /* background-color: #657c68; */
+  height: 250px;
 }
 
 .picture-container{

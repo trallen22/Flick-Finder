@@ -15,7 +15,7 @@ const NavbarFF = () => {
             <Navbar.Brand href="/home">Flick Finder</Navbar.Brand>
             <Nav className="me-auto">
                 <Nav.Link href="/home">Home</Nav.Link>
-                <Nav.Link href="#top-recommendations">Recommendations</Nav.Link>
+                <Nav.Link href="/top-recommendations">Recommendations</Nav.Link>
                 <Nav.Link href="/profile">Profile</Nav.Link>
             </Nav>
             <Form inline>

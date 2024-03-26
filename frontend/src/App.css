@@ -1,10 +1,27 @@
-/* .App {
+.App {
   text-align: center;
 }
 
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+}
+
+.profile-container{
+  align-items: center;
+  text-align: center;
+  color: white;
+  background-color: #657c68;
+  height: 350px;
+}
+
+.picture-container{
+  margin-top: 30px;
+}
+
+#profile-picture{
+  height: 100px;
+  width: 100px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -35,4 +52,4 @@
   to {
     transform: rotate(360deg);
   }
-} */
+}

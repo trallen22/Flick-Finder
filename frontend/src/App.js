@@ -1,6 +1,5 @@
 // import logo from './logo.svg';
 import './App.css';
-
 import Navbar from './components/navbar/navbar-index';
 import ReactDOM from "react-dom/client";
 import {

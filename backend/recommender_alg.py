@@ -76,15 +76,14 @@ def build_chart(genre, percentile=0.85):
 links_small = pd.read_csv(LINKS_SMALL_FILENAME)
 links_small = links_small[links_small['tmdbId'].notnull()]['tmdbId'].astype('int')
 
-print(metaData.index(19730))
-input("")
-metaData = metaData.drop([19730, 29503, 35587])
+# # I don't think this is necessary and I'm not sure why it is here 
+# metaData = metaData.drop([19730, 29503, 35587])
 
 # Check EDA Notebook for how and why I got these indices.
 metaData['id'] = metaData['id'].astype('int')
 
 smd = metaData[metaData['id'].isin(links_small)]
-print(f"smd shape: {smd.shape}")
+# print(f"smd shape: {smd.shape}")
 
 smd['tagline'] = smd['tagline'].fillna('')
 smd['description'] = smd['overview'] + smd['tagline']
@@ -93,11 +92,11 @@ smd['description'] = smd['description'].fillna('')
 tf = TfidfVectorizer(analyzer='word',ngram_range=(1, 2),min_df=0.0, stop_words='english')
 tfidf_matrix = tf.fit_transform(smd['description'])
 
-print(f"tfidf shape: {tfidf_matrix.shape}")
+# print(f"tfidf shape: {tfidf_matrix.shape}")
 
 cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
-print(f"cos sim: {cosine_sim[0]}")
+# print(f"cos sim: {cosine_sim[0]}")
 
 smd = smd.reset_index()
 titles = smd['title']
@@ -107,12 +106,13 @@ def get_recommendations(title):
     idx = indices[title]
     sim_scores = list(enumerate(cosine_sim[idx]))
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:31]
+    # this determines how many movies to recommend for each input movie 
+    sim_scores = sim_scores[1:31] # TODO: determine a good number of movies to return 
     movie_indices = [i[0] for i in sim_scores]
     return titles.iloc[movie_indices]
 
-print(f"the godfather recs: {get_recommendations('The Godfather').head(10)}")
-print(f"the dark knight recs: {get_recommendations('The Dark Knight').head(10)}")
+# print(f"the godfather recs: {get_recommendations('The Godfather').head(10)}")
+# print(f"the dark knight recs: {get_recommendations('The Dark Knight').head(10)}")
 
 credits = pd.read_csv(CREDITS_FILENAME)
 keywords = pd.read_csv(KEYWORD_FILENAME)
@@ -207,6 +207,11 @@ def improved_recommendations(title):
 
 print(f"better recs dark knight: {improved_recommendations('The Dark Knight')}")
 print(f"better recs mean girls: {improved_recommendations('Mean Girls')}")
+
+
+####
+# This is the collaborative recommender 
+#### 
 
 # reader = Reader()
 

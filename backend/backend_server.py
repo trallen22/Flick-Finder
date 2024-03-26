@@ -35,6 +35,7 @@ class Login(Resource):
         return
     def post(self):
         jsonData = request.get_json()
+        # TODO: need to add exception handling for KeyErrors 
         username = jsonData['username']
         password = jsonData['password']
 

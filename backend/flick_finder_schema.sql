@@ -1,32 +1,32 @@
--- Tristan Allen, Will Cox, and Daniel Carter 
 drop schema if exists flickfinder;
 create schema flickfinder;
 use flickfinder;
 create table movies (
-	movie_id         NUMERIC(6, 0),
-	title      VARCHAR(100),
-	genre      VARCHAR(1000),
-	overview   VARCHAR(1000),
-	keywords   VARCHAR(5000),
-	duration   INT,
-	release_date DATE,
+	-- movie_id         NUMERIC(6, 0),
+	movie_id	INT NOT NULL,
+	title		VARCHAR(120), -- longest is 105
+ 	genres		VARCHAR(100), -- longest is 98 
+	-- cast 		VARCHAR(5180), -- longest is 5179
+ 	description	VARCHAR(1000), -- longest is 1000 
+ 	keywords	VARCHAR(1950), -- longest is 1901
 	primary key (movie_id)
 	);
 	
 create table users (
-	user_id   VARCHAR(50),
-	pword     VARCHAR(50),  #how to encrypt
+	user_id   INT NOT NULL AUTO_INCREMENT,
+	username 	VARCHAR(50) NOT NULL,
+	password     VARCHAR(60) NOT NULL,  
 	email     VARCHAR(100),
-	reg_date  DATE,
+	-- reg_date  DATE,
 	primary key (user_id)
 );
 
 create table reviews (
-	user_id  VARCHAR(50),
-	movie_id NUMERIC(6,0),
-	rating   INT,
+	user_id  INT NOT NULL,
+	-- movie_id NUMERIC(6,0),
+	movie_id	INT NOT NULL,
+	rating   FLOAT(1),
 	rate_date DATE,
-	primary key (user_id, movie_id),
 	foreign key (user_id) references users(user_id),
 	foreign key (movie_id) references movies(movie_id)
 );

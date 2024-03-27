@@ -21,10 +21,10 @@ DATABASE = "FlickFinder"
 # KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
 
 #Changed file names to match mine CSV files
-META_FILENAME = "movies_metadata.csv"
-KEYWORD_FILENAME = "keywords.csv"
+META_FILENAME = "movie-data-csv/movies_metadata.csv"
+KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
 # FOR OTHER USERS, Please change the password to '123456' to use
-PASSWORD = 'Steelers19!'
+PASSWORD = '123456'
 
 
 # sqlInsert: executes a SQL insert statement on a given table

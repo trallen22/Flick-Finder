@@ -1,43 +1,37 @@
-import '../App.css';
-
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-
+import Button from 'react-bootstrap/Button';
 
 function TopRecommendations() {
+    const [movieData, setMovieData] = useState([]);
 
-    const [movieData, setMovieData] = useState({
-        movie0: { title: "no title for movie 1", description: "no description" }, 
-        movie1: { title: "no title for movie 2", description: "no description" }, 
-        movie2: { title: "no title for movie 3", description: "no description" }   
-    });
-
-    useEffect(() => {
+    const fetchRecommendations = () => {
         fetch("/top-recommendations").then((res) => {
             res.json().then((data) => {
-                // Setting a data from api
+                // Setting data from API
+                console.log('here');
+                console.log(data);
                 setMovieData(data);
             })
             .catch((error) => {
                 console.log(error);
             })
-
         });
-    }, []);
+    };
 
     return (
         <div>
-            <ul className="App-header">
-                <li>
-                    <Link to={`/movie/${movieData.movie0.title}`}>{movieData.movie0.title}</Link>
-                </li>
-                <li>
-                    <Link to={`/movie/${movieData.movie1.title}`}>{movieData.movie1.title}</Link>
-                </li>
-                <li>
-                    <Link to={`/movie/${movieData.movie2.title}`}>{movieData.movie2.title}</Link>
-                </li>
-            </ul>
+            {/* <button onClick={fetchRecommendations}>Load Recommendations</button> */}
+            <Button variant="primary" onClick={fetchRecommendations}>Recommend</Button>
+            {(movieData != []) && (
+                <ul className="App-header">
+                    {Object.keys(movieData).map((key, index) => (
+                        <li key={index}>
+                            <Link to={`/movie/${movieData[key].title}`}>{movieData[key].title}</Link>
+                        </li>
+                    ))}
+                </ul>
+            )}
         </div>
     );
 }

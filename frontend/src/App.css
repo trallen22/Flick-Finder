@@ -7,6 +7,11 @@
   pointer-events: none;
 }
 
+.nav-bar-ff{
+  position: fixed;
+  top: 0;
+}
+
 .profile-header{
   align-items: center;
   text-align: center;

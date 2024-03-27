@@ -15,13 +15,31 @@ function TopRecommendations() {
                 // Setting data from API
                 console.log('here');
                 console.log(data);
-                setMovieData(data);
+                // Fetch poster URLs for each movie
+                const promises = Object.values(data).map(movie => {
+                    return fetch(`https://api.themoviedb.org/3/search/movie?api_key=1b8a109c8da35481eb8e3f6a4d977ace&query=${encodeURIComponent(movie.title)}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.results.length > 0) {
+                                    return { ...movie, posterURL: `https://image.tmdb.org/t/p/w200${data.results[0].poster_path}` };
+                                } else {
+                                    return { ...movie, posterURL: null };
+                                }
+                            });
+                });
+    
+                // Wait for all promises to resolve
+                Promise.all(promises).then(updatedMovies => {
+                    // Set the state with updated movie data
+                    setMovieData(updatedMovies);
+                });
             })
             .catch((error) => {
                 console.log(error);
             })
         });
     };
+    
 
     return (
         <div className="recommend-wrapper">
@@ -40,26 +58,23 @@ function TopRecommendations() {
                 // </ListGroup>
                 <CardGroup>
                     {Object.keys(movieData).map((key, index) => (
-                        <Card style={{ width: '18rem' }}>
-                        <Card.Img variant="top" src="holder.js/100px180?text=Image cap" />
-                        <Card.Body>
-                            <Card.Title>{movieData[key].title}</Card.Title>
-                            <Card.Text>
-                                {movieData[key].description}  
-                            </Card.Text>
-                        </Card.Body>
-                        <ListGroup className="list-group-flush">
-                            <ListGroup.Item>{movieData[key].genre}</ListGroup.Item>
-                            {/* <ListGroup.Item>{movieData[key].keywords}</ListGroup.Item> */}
-                            <ListGroup.Item><Link to={`/movie/${movieData[key].title}`}>{movieData[key].title}</Link></ListGroup.Item>
-                        </ListGroup>
-                        {/* <Card.Body>
-                          <Card.Link href="#">Card Link</Card.Link>
-                          <Card.Link href="#">Another Link</Card.Link>
-                        </Card.Body> */}
-                      </Card>
+                        <Card key={index} style={{ width: '20%' }}>
+                            {movieData[key].posterURL && <Card.Img variant="top" className="movie-poster" src={movieData[key].posterURL} />}
+                            <Card.Body>
+                                <Card.Title>{movieData[key].title}</Card.Title>
+                                <Card.Text>
+                                    {movieData[key].description}  
+                                </Card.Text>
+                            </Card.Body>
+                            <ListGroup className="list-group-flush">
+                                <ListGroup.Item>{movieData[key].genre}</ListGroup.Item>
+                                {/* <ListGroup.Item>{movieData[key].keywords}</ListGroup.Item> */}
+                                <ListGroup.Item><Link to={`/movie/${movieData[key].title}`}>{movieData[key].title}</Link></ListGroup.Item>
+                            </ListGroup>
+                        </Card>
                     ))}
                 </CardGroup>
+
             )}
         </div>
     );

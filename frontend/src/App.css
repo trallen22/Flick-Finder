@@ -16,9 +16,10 @@
   text-align: center;
 }
 
-/* .recommend-button{
-
-} */
+.movie-poster{
+  height: 200px;
+  width: 75%;
+}
 
 
 .profile-header{

@@ -4,10 +4,11 @@ import sys
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
+PASSWORD = 'Steelers19!'
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
-		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) 
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()

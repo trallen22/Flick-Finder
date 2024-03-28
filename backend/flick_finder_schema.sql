@@ -37,12 +37,12 @@ create table reviews (
 create table likes (
 	user_id   INT NOT NULL,
 	movie_id  INT not null,
-	is_liked      BIT,   -- 0 for no, 1 for yes
+	is_liked      INT,   -- 0 for no, 1 for yes
 	foreign key (movie_id) references movies(movie_id),
 	foreign key (user_id) references users(user_id)
 );
 
-CREATE TABLE reccomendations (
+CREATE TABLE recomendations (
     movie_id INT NOT NULL,
     rec_one INT NOT NULL,
     rec_two INT NOT NULL,

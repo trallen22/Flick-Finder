@@ -79,6 +79,12 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		for character in listCast:
 			curCast.append(character["name"])
 		curCast = f"{curCast}"
+		#crew
+		listCrew = eval(cRow["crew"])
+		curCrew = []
+		for character in listCrew:
+			curCrew.append(character["name"])
+		curCrew = f"{curCast}"
 		# description (overview)
 		curOverview = mRow["overview"]
 		# keywords 
@@ -91,7 +97,7 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		curRuntime = mRow["runtime"] if mRow["runtime"] != '' else -1
 		# release date
 		curReleaseDate = mRow["release_date"] if mRow["release_date"] != '' else '0001-01-01'
-		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curOverview, curKeywords, curRuntime, curReleaseDate))
+		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curCrew, curOverview, curKeywords, curRuntime, curReleaseDate))
 		pbar.update(1)
 		
 connection.commit()

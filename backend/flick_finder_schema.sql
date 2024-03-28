@@ -8,6 +8,7 @@ create table movies (
 	title		VARCHAR(120), -- longest is 105
  	genres		VARCHAR(100), -- longest is 98 
 	cast 		VARCHAR(5180), -- longest is 5179
+	crew        VARCHAR(5180),
  	description	VARCHAR(1000), -- longest is 1000 
  	keywords	VARCHAR(1950), -- longest is 1901
 	runtime   INT,
@@ -30,7 +31,7 @@ create table reviews (
 	movie_id	INT NOT NULL,
 	rating   FLOAT(1),
 	rate_date DATE,
-	foreign key (user_id) references users(user_id),
+	foreign key (user_id) references users(user_id) on delete CASCADE,
 	foreign key (movie_id) references movies(movie_id)
 );
 
@@ -39,7 +40,7 @@ create table likes (
 	movie_id  INT not null,
 	is_liked      INT,   -- 0 for no, 1 for yes
 	foreign key (movie_id) references movies(movie_id),
-	foreign key (user_id) references users(user_id)
+	foreign key (user_id) references users(user_id) on delete cascade 
 );
 
 CREATE TABLE recomendations (

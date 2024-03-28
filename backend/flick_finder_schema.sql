@@ -33,3 +33,36 @@ create table reviews (
 	foreign key (user_id) references users(user_id),
 	foreign key (movie_id) references movies(movie_id)
 );
+
+create table likes (
+	user_id   INT NOT NULL,
+	movie_id  INT not null,
+	is_liked      INT,   -- 0 for no, 1 for yes
+	foreign key (movie_id) references movies(movie_id),
+	foreign key (user_id) references users(user_id)
+);
+
+CREATE TABLE recomendations (
+    movie_id INT NOT NULL,
+    rec_one INT NOT NULL,
+    rec_two INT NOT NULL,
+    rec_three INT NOT NULL,
+    rec_four INT NOT NULL,
+    rec_five INT NOT NULL,
+    rec_six INT NOT NULL,
+    rec_seven INT NOT NULL,
+    rec_eight INT NOT NULL,
+    rec_nine INT NOT NULL,
+    rec_ten INT NOT NULL,
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_one) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_two) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_three) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_four) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_five) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_six) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_seven) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_eight) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_nine) REFERENCES movies(movie_id),
+    FOREIGN KEY (rec_ten) REFERENCES movies(movie_id)
+);

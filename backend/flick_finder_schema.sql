@@ -42,7 +42,7 @@ create table likes (
 	foreign key (user_id) references users(user_id)
 );
 
-CREATE TABLE recomendations (
+CREATE TABLE recommendations (
     movie_id INT NOT NULL,
     rec_one INT NOT NULL,
     rec_two INT NOT NULL,

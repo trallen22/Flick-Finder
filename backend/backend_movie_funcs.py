@@ -4,11 +4,11 @@ import sys
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-PASSWORD = 'Steelers19!'
+# PASSWORD = 'Steelers19!'
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
-		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) 
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()
@@ -22,6 +22,10 @@ def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	connection.commit()
 	cursor.close()
 	return curMovies
+
+def get_movie_id(movieTitle:str) -> int:
+	curMovId = sql_query("SELECT movie_id FROM movies WHERE title=%s", (movieTitle,))[0]['movie_id']
+	return curMovId
 
 def get_movie_by_name(movieName:str) -> dict:
 	movieDict = {}
@@ -67,6 +71,3 @@ def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 		sql_query(rateStr, (userId, movieInfo['movie_id'], userRating, '0000-01-01'))
 	return 
 
-x = sql_query("SELECT title FROM movies", ())
-for i in x:
-	print(i['title'])

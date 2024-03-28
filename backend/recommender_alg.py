@@ -1,4 +1,5 @@
 # %matplotlib inline
+from webbrowser import get
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,8 +13,9 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet
 from surprise import Reader, Dataset, SVD, accuracy
 from surprise.model_selection import cross_validate, KFold
-
 import warnings; warnings.simplefilter('ignore')
+from backend_movie_funcs import sql_query, get_movie_id
+from tqdm import tqdm 
 
 META_FILENAME = "movie-data-csv/movies_metadata.csv"
 KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
@@ -40,9 +42,9 @@ qualified['vote_count'] = qualified['vote_count'].astype('int')
 qualified['vote_average'] = qualified['vote_average'].astype('int')
 
 def weighted_rating(curDataSet):
-    v = curDataSet['vote_count']
-    R = curDataSet['vote_average']
-    return (v/(v+minNumVotes) * R) + (minNumVotes/(minNumVotes+v) * meanVote)
+	v = curDataSet['vote_count']
+	R = curDataSet['vote_average']
+	return (v/(v+minNumVotes) * R) + (minNumVotes/(minNumVotes+v) * meanVote)
 
 qualified['wr'] = qualified.apply(weighted_rating, axis=1)
 # TODO: need to look into if we just want the top 250 or all movies or in between
@@ -56,20 +58,20 @@ s.name = 'genre'
 genreMetaData = metaData.drop('genres', axis=1).join(s)
 
 def build_chart(genre, percentile=0.85):
-    df = genreMetaData[genreMetaData['genre'] == genre]
-    vote_counts = df[df['vote_count'].notnull()]['vote_count'].astype('int')
-    vote_averages = df[df['vote_average'].notnull()]['vote_average'].astype('int')
-    C = vote_averages.mean()
-    m = vote_counts.quantile(percentile)
-    
-    qualified = df[(df['vote_count'] >= m) & (df['vote_count'].notnull()) & (df['vote_average'].notnull())][['title', 'year', 'vote_count', 'vote_average', 'popularity']]
-    qualified['vote_count'] = qualified['vote_count'].astype('int')
-    qualified['vote_average'] = qualified['vote_average'].astype('int')
-    
-    qualified['wr'] = qualified.apply(lambda x: (x['vote_count']/(x['vote_count']+m) * x['vote_average']) + (m/(m+x['vote_count']) * C), axis=1)
-    qualified = qualified.sort_values('wr', ascending=False).head(250)
-    
-    return qualified
+	df = genreMetaData[genreMetaData['genre'] == genre]
+	vote_counts = df[df['vote_count'].notnull()]['vote_count'].astype('int')
+	vote_averages = df[df['vote_average'].notnull()]['vote_average'].astype('int')
+	C = vote_averages.mean()
+	m = vote_counts.quantile(percentile)
+	
+	qualified = df[(df['vote_count'] >= m) & (df['vote_count'].notnull()) & (df['vote_average'].notnull())][['title', 'year', 'vote_count', 'vote_average', 'popularity']]
+	qualified['vote_count'] = qualified['vote_count'].astype('int')
+	qualified['vote_average'] = qualified['vote_average'].astype('int')
+	
+	qualified['wr'] = qualified.apply(lambda x: (x['vote_count']/(x['vote_count']+m) * x['vote_average']) + (m/(m+x['vote_count']) * C), axis=1)
+	qualified = qualified.sort_values('wr', ascending=False).head(250)
+	
+	return qualified
 
 # print(f"build chart: {build_chart('Drama').head(15)}")
 
@@ -103,13 +105,13 @@ titles = smd['title']
 indices = pd.Series(smd.index, index=smd['title'])
 
 def get_recommendations(title):
-    idx = indices[title]
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    # this determines how many movies to recommend for each input movie 
-    sim_scores = sim_scores[1:31] # TODO: determine a good number of movies to return 
-    movie_indices = [i[0] for i in sim_scores]
-    return titles.iloc[movie_indices]
+	idx = indices[title]
+	sim_scores = list(enumerate(cosine_sim[idx]))
+	sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+	# this determines how many movies to recommend for each input movie 
+	sim_scores = sim_scores[1:31] # TODO: determine a good number of movies to return 
+	movie_indices = [i[0] for i in sim_scores]
+	return titles.iloc[movie_indices]
 
 # print(f"the godfather recs: {get_recommendations('The Godfather').head(10)}")
 # print(f"the dark knight recs: {get_recommendations('The Dark Knight').head(10)}")
@@ -121,13 +123,13 @@ keywords['id'] = keywords['id'].astype('int')
 credits['id'] = credits['id'].astype('int')
 metaData['id'] = metaData['id'].astype('int')
 
-print(f"md shape: {metaData.shape}")
+# print(f"md shape: {metaData.shape}")
 
 metaData = metaData.merge(credits, on='id')
 metaData = metaData.merge(keywords, on='id')
 
 smd = metaData[metaData['id'].isin(links_small)]
-print(f"smd shape: {smd.shape}")
+# print(f"smd shape: {smd.shape}")
 
 smd['cast'] = smd['cast'].apply(literal_eval)
 smd['crew'] = smd['crew'].apply(literal_eval)
@@ -136,10 +138,10 @@ smd['cast_size'] = smd['cast'].apply(lambda x: len(x))
 smd['crew_size'] = smd['crew'].apply(lambda x: len(x))
 
 def get_director(x):
-    for i in x:
-        if i['job'] == 'Director':
-            return i['name']
-    return np.nan
+	for i in x:
+		if i['job'] == 'Director':
+			return i['name']
+	return np.nan
 
 smd['director'] = smd['crew'].apply(get_director)
 smd['cast'] = smd['cast'].apply(lambda x: [i['name'] for i in x] if isinstance(x, list) else [])
@@ -153,7 +155,7 @@ s = smd.apply(lambda x: pd.Series(x['keywords']),axis=1).stack().reset_index(lev
 s.name = 'keyword'
 
 s = s.value_counts()
-print(f"s: {s[:5]}")
+# print(f"s: {s[:5]}")
 
 s = s[s > 1]
 
@@ -161,11 +163,11 @@ stemmer = SnowballStemmer('english')
 stemmer.stem('dogs')
 
 def filter_keywords(x):
-    words = []
-    for i in x:
-        if i in s:
-            words.append(i)
-    return words
+	words = []
+	for i in x:
+		if i in s:
+			words.append(i)
+	return words
 
 smd['keywords'] = smd['keywords'].apply(filter_keywords)
 smd['keywords'] = smd['keywords'].apply(lambda x: [stemmer.stem(i) for i in x])
@@ -183,34 +185,65 @@ smd = smd.reset_index()
 titles = smd['title']
 indices = pd.Series(smd.index, index=smd['title'])
 
-print(f"the dark knight recs: {get_recommendations('The Dark Knight').head(10)}")
-print(f"mean girls recs: {get_recommendations('Mean Girls').head(10)}")
+# print(f"the dark knight recs: {get_recommendations('The Dark Knight').head(10)}")
+# print(f"mean girls recs: {get_recommendations('Mean Girls').head(10)}")
 
 def improved_recommendations(title):
-    idx = indices[title]
-    sim_scores = list(enumerate(cosine_sim[idx]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:26]
-    movie_indices = [i[0] for i in sim_scores]
-    
-    movies = smd.iloc[movie_indices][['title', 'vote_count', 'vote_average', 'year']]
-    vote_counts = movies[movies['vote_count'].notnull()]['vote_count'].astype('int')
-    vote_averages = movies[movies['vote_average'].notnull()]['vote_average'].astype('int')
-    C = vote_averages.mean()
-    m = vote_counts.quantile(0.60)
-    qualified = movies[(movies['vote_count'] >= m) & (movies['vote_count'].notnull()) & (movies['vote_average'].notnull())]
-    qualified['vote_count'] = qualified['vote_count'].astype('int')
-    qualified['vote_average'] = qualified['vote_average'].astype('int')
-    qualified['wr'] = qualified.apply(weighted_rating, axis=1)
-    qualified = qualified.sort_values('wr', ascending=False).head(10)
-    return qualified
+	idx = indices[title]
+	sim_scores = list(enumerate(cosine_sim[idx]))
+	sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+	sim_scores = sim_scores[1:26]
+	movie_indices = [i[0] for i in sim_scores]
+	
+	movies = smd.iloc[movie_indices][['title', 'vote_count', 'vote_average', 'year']]
+	vote_counts = movies[movies['vote_count'].notnull()]['vote_count'].astype('int')
+	vote_averages = movies[movies['vote_average'].notnull()]['vote_average'].astype('int')
+	C = vote_averages.mean()
+	m = vote_counts.quantile(0.60)
+	qualified = movies[(movies['vote_count'] >= m) & (movies['vote_count'].notnull()) & (movies['vote_average'].notnull())]
+	qualified['vote_count'] = qualified['vote_count'].astype('int')
+	qualified['vote_average'] = qualified['vote_average'].astype('int')
+	qualified['wr'] = qualified.apply(weighted_rating, axis=1)
+	qualified = qualified.sort_values('wr', ascending=False).head(10)
+	return qualified
 
-print(f"better recs dark knight: {improved_recommendations('The Dark Knight')}")
-print(f"better recs mean girls: {improved_recommendations('Mean Girls')}")
+# print(f"better recs dark knight: {improved_recommendations('The Dark Knight')}")
+# print(f"better recs mean girls: {improved_recommendations('Mean Girls')}")
+
+# TODO: need to add all movie to the recommender, not sure where that would be done 
+allMovies = sql_query("SELECT title FROM movies", ())
+movieIdDict = dict() # { movie title: movie id}
+pbar = tqdm(desc='GOING MOVIE BY MOVIE', total=46000) # TODO: figure out total number of movies 
+for curMovie in allMovies:
+	try:
+		curMovId = movieIdDict[curMovie['title']]
+	except KeyError:
+		curMovId = get_movie_id(curMovie['title'])
+		movieIdDict[curMovie['title']] = curMovId
+	try: 
+		recs = improved_recommendations(curMovie['title'])
+		listRecTitles = list(recs['title'])
+		listRecIds = [curMovId]
+		for curRecTitle in listRecTitles:
+			try:
+				curRecId = movieIdDict[curRecTitle]
+			except KeyError:
+				curRecId = get_movie_id(curRecTitle)
+				movieIdDict[curRecTitle] = curRecId
+			listRecIds.append(curRecId)
+		placeHolders = f"%s, " * 11 # number of columns in recommendations table 
+		sql_query(f"INSERT INTO recommendations VALUES ({placeHolders[:-2]});", tuple(listRecIds))
+	except KeyError:
+		print("ERROR: movie not in recommender")
+	except Exception as e: # TODO: need to figure out how to avoid some of these exceptions
+		print(e)
+	# input("")
+	pbar.update()
+
 
 
 ####
-# This is the collaborative recommender 
+# This is for the collaborative recommender 
 #### 
 
 # reader = Reader()
@@ -262,12 +295,12 @@ print(f"better recs mean girls: {improved_recommendations('Mean Girls')}")
 #     tmdbId = id_map.loc[title]['id']
 #     #print(idx)
 #     movie_id = id_map.loc[title]['movieId']
-    
+	
 #     sim_scores = list(enumerate(cosine_sim[int(idx)]))
 #     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
 #     sim_scores = sim_scores[1:26]
 #     movie_indices = [i[0] for i in sim_scores]
-    
+	
 #     movies = smd.iloc[movie_indices][['title', 'vote_count', 'vote_average', 'year', 'id']]
 #     movies['est'] = movies['id'].apply(lambda x: svd.predict(userId, indices_map.loc[x]['movieId']).est)
 #     movies = movies.sort_values('est', ascending=False)

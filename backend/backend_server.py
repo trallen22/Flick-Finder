@@ -96,7 +96,7 @@ class Movie(Resource):
         return get_movie_by_name(movieName)
 
 class TopRecommendations(Resource):
-    @login_required
+    # @login_required
     def get(self):
         return top_recommendations()
 

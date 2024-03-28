@@ -66,4 +66,6 @@ def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 		sql_query(rateStr, (userId, movieInfo['movie_id'], userRating, '0000-01-01'))
 	return 
 
-# print(rate_movie('prometheus', 1, 4.5))
+x = sql_query("SELECT title FROM movies", ())
+for i in x:
+	print(i['title'])

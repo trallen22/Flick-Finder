@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_movie_funcs import top_recommendations, get_movie_by_name, sql_query
+from backend_movie_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie
 
 app = Flask(__name__)
 
@@ -93,12 +93,18 @@ class SignUp(Resource):
 
 class Movie(Resource):
     def get(self, movieName:str):
-        return get_movie_by_name(movieName)
+        return get_movie_details_by_name(movieName)
 
 class TopRecommendations(Resource):
     # @login_required
     def get(self):
-        return top_recommendations()
+        # TODO: need to figure out how to handle if no user is logged in 
+        # currently returns random movies
+        try: 
+            curUserId = current_user.id
+        except Exception as e:
+            curUserId = -1
+        return top_recommendations(curUserId)
 
 class RateMovie(Resource):
     def post(self):

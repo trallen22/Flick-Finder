@@ -31,13 +31,13 @@ def get_movie_title_by_id(movieId:int) -> str:
 	curMovTitle = sql_query("SELECT title FROM movies WHERE movie_id=%s", (movieId,))[0]['title']
 	return curMovTitle
 
-def get_movie_by_name(movieName:str) -> dict:
+def get_movie_details_by_name(movieName:str) -> dict:
 	movieDict = {}
 	movieTitle = movieName.replace('_', ' ')
 	sqlStr = "SELECT * FROM movies WHERE title=%s;"
 	curMovies = sql_query(sqlStr, (movieTitle,))
 	try:
-		curMovie = curMovies[0]
+		curMovie = curMovies[0] # this checks if movie with given title is found in db
 		movieDict = {"title":curMovie["title"], 
 					"description":curMovie["description"],
 					"genre":curMovie['genres']}
@@ -52,7 +52,8 @@ def get_movie_by_name(movieName:str) -> dict:
 #
 # parameters: int, user id for the given user 
 # returns: dict, dictionary of movies 
-def top_recommendations(userId:int=1) -> dict:
+def top_recommendations(userId:int) -> dict:
+	# TODO: need to define behavior if user is not logged in 
 	NUM_REC_MOVIES = 5
 	movieDict = {}
 	userRecsDict = weight_associated_movies(userId)
@@ -61,23 +62,22 @@ def top_recommendations(userId:int=1) -> dict:
 	for curMovId in userRecsIdList:
 		userRecsTitleList.append(get_movie_title_by_id(curMovId))
 	for i in range(len(userRecsTitleList)):
-		movieDict[f"movie{i}"] = get_movie_by_name(userRecsTitleList[i])
+		movieDict[f"movie{i}"] = get_movie_details_by_name(userRecsTitleList[i])
 	return movieDict
 
 # puts the user rating and associated movie information into the reviews table
 def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 	movieTitle = movieName.replace('_', ' ')
-	movieStr = "SELECT movie_id FROM movies WHERE title=%s;"
-	movieInfo = sql_query(movieStr, (movieTitle,))[0]
+	movieId = get_movie_id_by_title(movieTitle)
 	# check if movie has already been rated 
 	checkStr = "SELECT * FROM reviews WHERE movie_id=%s AND user_id=%s;"
-	check = sql_query(checkStr, (movieInfo["movie_id"], userId))
+	check = sql_query(checkStr, (movieId, userId))
 	if len(check):
 		updateStr = "UPDATE reviews SET rating=%s WHERE movie_id=%s;"
-		sql_query(updateStr, (userRating, movieInfo["movie_id"]))
+		sql_query(updateStr, (userRating, movieId))
 	else:
 		rateStr = "INSERT INTO reviews VALUES (%s, %s, %s, %s)"
-		sql_query(rateStr, (userId, movieInfo['movie_id'], userRating, '0000-01-01'))
+		sql_query(rateStr, (userId, movieId, userRating, '0000-01-01'))
 	return 
 
 def get_user_ratings(userId:int) -> dict:
@@ -111,7 +111,6 @@ def weight_associated_movies(userId:int) -> dict:
 	assocMovieList = get_associated_movies()
 	weightedMovieDict = dict() # { movie_id: calculated weight }
 	for curMovAndRecs in assocMovieList:
-		# print(curMovAndRecs)
 		try: 
 			curMovRating = userRatingsDict[curMovAndRecs['movie_id']]
 		except KeyError: 
@@ -124,14 +123,12 @@ def weight_associated_movies(userId:int) -> dict:
 				weightedMovieDict[curRecMovieId] += userWeightedCurRec
 			except KeyError:
 				weightedMovieDict[curRecMovieId] = userWeightedCurRec
-		# print(weightedMovieDict)
-		# pass
 	sortedWeightMovDict = dict(sorted(weightedMovieDict.items(), key=lambda x:x[1], reverse=True))
 	return sortedWeightMovDict
 
 # print(get_user_ratings(1))
 # print(get_associated_movies())
 # print(weight_associated_movies(1))
-x = top_recommendations()
-for i in list(x.keys()):
-	print(f"{i[-1]}: {x[i]['title']}")
+# x = top_recommendations()
+# for i in list(x.keys()):
+# 	print(f"{i[-1]}: {x[i]['title']}")

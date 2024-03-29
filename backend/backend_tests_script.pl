@@ -52,7 +52,7 @@ check_test($curTest, 2.2);
 
 END {
     print("Tests passed: $passedTests/$numTests\n");
-    if (!$passedTests) {
+    if (!$passedTests) { # this is if no tests pass 
         print("Make sure the backend server is running\n");
     }
 }

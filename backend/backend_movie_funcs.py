@@ -31,6 +31,7 @@ def get_movie_title_by_id(movieId:int) -> str:
 	curMovTitle = sql_query("SELECT title FROM movies WHERE movie_id=%s;", (movieId,))[0]['title']
 	return curMovTitle
 
+# TODO: should user rating, liked/disliked be returned from this function? 
 def get_movie_details_by_name(movieName:str) -> dict:
 	movieDict = {}
 	movieTitle = movieName.replace('_', ' ')
@@ -84,16 +85,17 @@ def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 		sql_query(rateStr, (userId, movieId, userRating, '0000-01-01'))
 	return 
 
-# TODO: need to look into how to represent userOpinion  
-# --> could make dislike = 1, like = 2, favorite = 3, 0 to remove an opinion from db 
+# TODO: need to look into how to represent userOpinion, I think int is the best way   
+# --> could make dislike = 2, like = 3, favorite = 4, check opinion = 1, 0 to remove an opinion from db 
 def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
+	opinionStatus = { "status": "success", "details": "" }
 	movieTitle = movieName.replace('_', ' ')
 	movieId = get_movie_id_by_title(movieTitle)
 	# checking if movie has already been liked/disliked/favorited  
-	checkStr = "SELECT * FROM likes WHERE movie_id=%s AND user_id=%s;"
+	checkStr = "SELECT is_liked FROM likes WHERE movie_id=%s AND user_id=%s;"
 	check = sql_query(checkStr, (movieId, userId))
-	# TODO: need to implement the date of rating a movie 
-	if userOpinion:
+	# TODO: Do we want to implement the date of liking a movie? 
+	if userOpinion > 1:
 		if len(check):
 			updateStr = "UPDATE likes SET is_liked=%s WHERE movie_id=%s;"
 			sql_query(updateStr, (userOpinion, movieId))
@@ -101,10 +103,13 @@ def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
 			rateStr = "INSERT INTO likes VALUES (%s, %s, %s);"
 			sql_query(rateStr, (userId, movieId, userOpinion))
 	else:
-		if len(check):
+		if userOpinion:
+			# TODO: need to add logic if user hasn't liked/disliked a movie 
+			opinionStatus['details'] = check[0]['is_liked']
+		elif len(check):
 			deleteStr = "DELETE FROM likes WHERE movie_id=%s AND user_id=%s;"
 			sql_query(deleteStr, (movieId, userId))
-	return 
+	return opinionStatus
 
 def get_user_ratings(userId:int) -> dict:
 	userRatingDict = dict()
@@ -164,4 +169,6 @@ def weight_associated_movies(userId:int) -> dict:
 
 # print(top_recommendations(1))
 
-# user_opinion_of_movie("Batman Begins", 1, 0)
+print(user_opinion_of_movie("Batman Begins", 1, 3))
+print(user_opinion_of_movie("Prometheus", 1, 4))
+print(user_opinion_of_movie("The Dark Knight", 1, 1))

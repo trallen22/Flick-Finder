@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_movie_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie
+from backend_movie_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie
 
 app = Flask(__name__)
 
@@ -113,6 +113,11 @@ class RateMovie(Resource):
         jsonData = request.json()
 
 # TODO: need to implement like/dislike/favorite 
+class UserOpinion(Resource): 
+    def get(self):
+        # TODO: need logic if user not logged in 
+        # return user_opinion_of_movie(current_user.id) 
+        return user_opinion_of_movie(1)
 
 
 api.add_resource(TopRecommendations, "/top-recommendations")

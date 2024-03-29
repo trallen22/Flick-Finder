@@ -80,6 +80,8 @@ def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 		sql_query(rateStr, (userId, movieId, userRating, '0000-01-01'))
 	return 
 
+
+
 def get_user_ratings(userId:int) -> dict:
 	userRatingDict = dict()
 	userRatingList = sql_query("SELECT movie_id, rating FROM reviews WHERE user_id=%s", (userId,))
@@ -126,9 +128,11 @@ def weight_associated_movies(userId:int) -> dict:
 	sortedWeightMovDict = dict(sorted(weightedMovieDict.items(), key=lambda x:x[1], reverse=True))
 	return sortedWeightMovDict
 
-# print(get_user_ratings(1))
-# print(get_associated_movies())
-# print(weight_associated_movies(1))
-# x = top_recommendations()
-# for i in list(x.keys()):
-# 	print(f"{i[-1]}: {x[i]['title']}")
+# print("don't forget to comment below!!") 
+# rate_movie("Prometheus", 1, 5)
+# rate_movie("Finding Nemo", 1, 1)
+# rate_movie("Forrest Gump", 1, 2)
+# rate_movie("Walk on Water", 1, 1)
+# rate_movie("The Dark Knight", 1, 5)
+# rate_movie("Batman Begins", 1, 5)
+

@@ -14,7 +14,7 @@ from nltk.corpus import wordnet
 from surprise import Reader, Dataset, SVD, accuracy
 from surprise.model_selection import cross_validate, KFold
 import warnings; warnings.simplefilter('ignore')
-from backend_movie_funcs import sql_query, get_movie_id
+from backend_movie_funcs import sql_query, get_movie_id_by_title
 from tqdm import tqdm 
 
 META_FILENAME = "movie-data-csv/movies_metadata.csv"
@@ -210,7 +210,8 @@ def improved_recommendations(title):
 # print(f"better recs dark knight: {improved_recommendations('The Dark Knight')}")
 # print(f"better recs mean girls: {improved_recommendations('Mean Girls')}")
 
-# TODO: need to add all movie to the recommender, not sure where that would be done 
+# TODO: need to think about how many movies we want in the recommender, not sure where that would be done
+# TOOD: currently about 9700 movies in recommender 
 allMovies = sql_query("SELECT title FROM movies", ())
 movieIdDict = dict() # { movie title: movie id}
 pbar = tqdm(desc='GOING MOVIE BY MOVIE', total=46000) # TODO: figure out total number of movies 
@@ -218,7 +219,7 @@ for curMovie in allMovies:
 	try:
 		curMovId = movieIdDict[curMovie['title']]
 	except KeyError:
-		curMovId = get_movie_id(curMovie['title'])
+		curMovId = get_movie_id_by_title(curMovie['title'])
 		movieIdDict[curMovie['title']] = curMovId
 	try: 
 		recs = improved_recommendations(curMovie['title'])
@@ -228,7 +229,7 @@ for curMovie in allMovies:
 			try:
 				curRecId = movieIdDict[curRecTitle]
 			except KeyError:
-				curRecId = get_movie_id(curRecTitle)
+				curRecId = get_movie_id_by_title(curRecTitle)
 				movieIdDict[curRecTitle] = curRecId
 			listRecIds.append(curRecId)
 		placeHolders = f"%s, " * 11 # number of columns in recommendations table 

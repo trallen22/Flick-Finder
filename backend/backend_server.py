@@ -41,6 +41,7 @@ class Login(Resource):
 
         cursor = mysql.connection.cursor()
         cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
+        # TODO: need to add exception handling here as well if user not found 
         user_data = cursor.fetchall()[0]
         cursor.close()
 
@@ -78,21 +79,21 @@ class SignUp(Resource):
         username = jsonData["username"]
         email = jsonData["email"]
         password = jsonData["password"]
-        if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
+        if len(sql_query("SELECT * FROM users WHERE username=%s;", (username,))):
             retStatus = { "status": "failed", "details": "username already taken" }
-        elif len(sql_query("SELECT * FROM users WHERE email=%s", (email,))):
+        elif len(sql_query("SELECT * FROM users WHERE email=%s;", (email,))):
             retStatus = { "status": "failed", "details": "email already taken" }
         else: 
             hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
             try:
-                sql_query("INSERT INTO users VALUES (%s, %s, %s, %s)", (None, username, hashed_password, email))
+                sql_query("INSERT INTO users VALUES (%s, %s, %s, %s);", (None, username, hashed_password, email))
                 retStatus = { "status": "success", "details": "user successfully signed up"}
             except Exception:
                 retStatus = { "status": "failed", "details": "error reaching database" }
         return retStatus    
 
 class Movie(Resource):
-    def get(self, movieName:str):
+    def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
         return get_movie_details_by_name(movieName)
 
 class TopRecommendations(Resource):
@@ -110,6 +111,8 @@ class TopRecommendations(Resource):
 class RateMovie(Resource):
     def post(self):
         jsonData = request.json()
+
+# TODO: need to implement like/dislike/favorite 
 
 
 api.add_resource(TopRecommendations, "/top-recommendations")

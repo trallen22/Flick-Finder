@@ -1,3 +1,4 @@
+#!/usr/bin/perl 
 use strict;
 use Cwd;
 
@@ -13,7 +14,7 @@ sub check_test {
     if ($curStr) {
         $passedTests = $passedTests + 1;
     } else {
-        print("Test $curTest failed\n")
+        print("Test $curTest failed\n");
     }
 }
 

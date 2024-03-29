@@ -24,11 +24,11 @@ def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	return curMovies
 
 def get_movie_id_by_title(movieTitle:str) -> int:
-	curMovId = sql_query("SELECT movie_id FROM movies WHERE title=%s", (movieTitle,))[0]['movie_id']
+	curMovId = sql_query("SELECT movie_id FROM movies WHERE title=%s;", (movieTitle,))[0]['movie_id']
 	return curMovId
 
 def get_movie_title_by_id(movieId:int) -> str:
-	curMovTitle = sql_query("SELECT title FROM movies WHERE movie_id=%s", (movieId,))[0]['title']
+	curMovTitle = sql_query("SELECT title FROM movies WHERE movie_id=%s;", (movieId,))[0]['title']
 	return curMovTitle
 
 def get_movie_details_by_name(movieName:str) -> dict:
@@ -52,6 +52,7 @@ def get_movie_details_by_name(movieName:str) -> dict:
 #
 # parameters: int, user id for the given user 
 # returns: dict, dictionary of movies 
+# TODO: need to implement logic so that movies that have been rated aren't recommended 
 def top_recommendations(userId:int) -> dict:
 	# TODO: need to define behavior if user is not logged in 
 	NUM_REC_MOVIES = 5
@@ -66,31 +67,54 @@ def top_recommendations(userId:int) -> dict:
 	return movieDict
 
 # puts the user rating and associated movie information into the reviews table
+# TODO: could look into implementing removing a rating for a movie
+# --> could rate from 0.5-5 and then have 0 as the remove value 
 def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 	movieTitle = movieName.replace('_', ' ')
 	movieId = get_movie_id_by_title(movieTitle)
-	# check if movie has already been rated 
+	# checking if movie has already been rated 
 	checkStr = "SELECT * FROM reviews WHERE movie_id=%s AND user_id=%s;"
 	check = sql_query(checkStr, (movieId, userId))
+	# TODO: Do we need to implement the date of rating a movie? 
 	if len(check):
 		updateStr = "UPDATE reviews SET rating=%s WHERE movie_id=%s;"
 		sql_query(updateStr, (userRating, movieId))
 	else:
-		rateStr = "INSERT INTO reviews VALUES (%s, %s, %s, %s)"
+		rateStr = "INSERT INTO reviews VALUES (%s, %s, %s, %s);"
 		sql_query(rateStr, (userId, movieId, userRating, '0000-01-01'))
 	return 
 
-
+# TODO: need to look into how to represent userOpinion  
+# --> could make dislike = 1, like = 2, favorite = 3, 0 to remove an opinion from db 
+def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
+	movieTitle = movieName.replace('_', ' ')
+	movieId = get_movie_id_by_title(movieTitle)
+	# checking if movie has already been liked/disliked/favorited  
+	checkStr = "SELECT * FROM likes WHERE movie_id=%s AND user_id=%s;"
+	check = sql_query(checkStr, (movieId, userId))
+	# TODO: need to implement the date of rating a movie 
+	if userOpinion:
+		if len(check):
+			updateStr = "UPDATE likes SET is_liked=%s WHERE movie_id=%s;"
+			sql_query(updateStr, (userOpinion, movieId))
+		else:
+			rateStr = "INSERT INTO likes VALUES (%s, %s, %s);"
+			sql_query(rateStr, (userId, movieId, userOpinion))
+	else:
+		if len(check):
+			deleteStr = "DELETE FROM likes WHERE movie_id=%s AND user_id=%s;"
+			sql_query(deleteStr, (movieId, userId))
+	return 
 
 def get_user_ratings(userId:int) -> dict:
 	userRatingDict = dict()
-	userRatingList = sql_query("SELECT movie_id, rating FROM reviews WHERE user_id=%s", (userId,))
+	userRatingList = sql_query("SELECT movie_id, rating FROM reviews WHERE user_id=%s;", (userId,))
 	for curRating in userRatingList: 
 		userRatingDict[curRating['movie_id']] = curRating['rating']
 	return userRatingDict
 
 def get_associated_movies() -> list: 
-	associatedMovies = sql_query("SELECT * FROM recommendations", ())
+	associatedMovies = sql_query("SELECT * FROM recommendations;", ())
 	return associatedMovies 
 
 def weight_associated_movies(userId:int) -> dict:
@@ -128,7 +152,9 @@ def weight_associated_movies(userId:int) -> dict:
 	sortedWeightMovDict = dict(sorted(weightedMovieDict.items(), key=lambda x:x[1], reverse=True))
 	return sortedWeightMovDict
 
-# print("don't forget to comment below!!") 
+# ##############
+# Used for testing 
+# print("don't forget to comment the code below!!") 
 # rate_movie("Prometheus", 1, 5)
 # rate_movie("Finding Nemo", 1, 1)
 # rate_movie("Forrest Gump", 1, 2)
@@ -136,3 +162,6 @@ def weight_associated_movies(userId:int) -> dict:
 # rate_movie("The Dark Knight", 1, 5)
 # rate_movie("Batman Begins", 1, 5)
 
+# print(top_recommendations(1))
+
+# user_opinion_of_movie("Batman Begins", 1, 0)

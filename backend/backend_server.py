@@ -107,17 +107,30 @@ class TopRecommendations(Resource):
             curUserId = -1
         return top_recommendations(curUserId)
 
-# TODO: need to implement this 
+# TODO: need to implement GET reqeust and clean up POST
 class RateMovie(Resource):
-    def post(self):
+    def post(self, movieName):
         jsonData = request.json()
+        userRating = float(jsonData['rating'])
+        try:
+            curUserId = current_user.id
+        except Exception as e:
+            curUserId = -1
+        # return rate_movie(movieTitle, curUserId, userRating)
+        return rate_movie(movieName, 1, userRating)
 
-# TODO: need to implement like/dislike/favorite 
+# TODO: need to implement like/dislike/favorite GET
 class UserOpinion(Resource): 
-    def get(self):
+    def post(self, movieName:str):
+        jsonData = request.get_json()
+        userOpinion = int(jsonData['opinion'])
+        try:
+            curUserId = current_user.id
+        except Exception as e:
+            curUserId = -1
         # TODO: need logic if user not logged in 
-        # return user_opinion_of_movie(current_user.id) 
-        return user_opinion_of_movie(1)
+        # return user_opinion_of_movie(movieTitle, curUserId, userOpinion) 
+        return user_opinion_of_movie(movieName, 1, userOpinion) 
 
 
 api.add_resource(TopRecommendations, "/top-recommendations")
@@ -126,6 +139,10 @@ api.add_resource(SignUp, "/sign-up")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
 api.add_resource(GetUser, "/get_user")
+# TODO: need to decide how to setup url; /movie/<movieName>/rating or /rating/<movieName>; 
+#       former might be easier to implement with react useLocation() 
+api.add_resource(RateMovie, "/movie/<movieName>/rating")
+api.add_resource(UserOpinion, "/movie/<movieName>/opinion")
 
 if __name__ == "__main__":
     app.run(debug=True)

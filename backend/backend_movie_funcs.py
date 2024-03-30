@@ -71,6 +71,7 @@ def top_recommendations(userId:int) -> dict:
 # TODO: could look into implementing removing a rating for a movie
 # --> could rate from 0.5-5 and then have 0 as the remove value 
 def rate_movie(movieName:str, userId:int, userRating:float) -> None:
+	# TODO: is this necessary 
 	movieTitle = movieName.replace('_', ' ')
 	movieId = get_movie_id_by_title(movieTitle)
 	# checking if movie has already been rated 
@@ -87,7 +88,12 @@ def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 
 # TODO: need to look into how to represent userOpinion, I think int is the best way   
 # --> could make dislike = 2, like = 3, favorite = 4, check opinion = 1, 0 to remove an opinion from db 
+# TODO: should getting user opinion be it's own function? I think no 
 def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
+	"""
+	parameter: 
+		userOpinion - int, 0 -> remove opinion; 1 -> return opinion; 2 -> dislike movie; 3 -> like movie; 4 -> favorite movie 
+	"""
 	opinionStatus = { "status": "success", "details": "" }
 	movieTitle = movieName.replace('_', ' ')
 	movieId = get_movie_id_by_title(movieTitle)
@@ -104,14 +110,20 @@ def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
 			sql_query(rateStr, (userId, movieId, userOpinion))
 	else:
 		if userOpinion:
-			# TODO: need to add logic if user hasn't liked/disliked a movie 
-			opinionStatus['details'] = check[0]['is_liked']
+			# TODO: need to add logic if user hasn't liked/disliked a movie; need to figure out what to return if not liked 
+			try:
+				opinionStatus['details'] = check[0]['is_liked']
+			except IndexError:
+				opinionStatus['details'] = 0
 		elif len(check):
 			deleteStr = "DELETE FROM likes WHERE movie_id=%s AND user_id=%s;"
 			sql_query(deleteStr, (movieId, userId))
 	return opinionStatus
 
 def get_user_ratings(userId:int) -> dict:
+	"""
+	returns: dict, dictionary of { movie1_id: rating, movie2_id: rating, ... } 
+	"""
 	userRatingDict = dict()
 	userRatingList = sql_query("SELECT movie_id, rating FROM reviews WHERE user_id=%s;", (userId,))
 	for curRating in userRatingList: 
@@ -122,6 +134,7 @@ def get_associated_movies() -> list:
 	associatedMovies = sql_query("SELECT * FROM recommendations;", ())
 	return associatedMovies 
 
+# TODO: need to look into how likes/dislikes/favorites will affect the recommendations 
 def weight_associated_movies(userId:int) -> dict:
 	WEIGHT_MULTIPLIER = 1
 	# TODO: could look into how changing these weights affects recommendations 
@@ -169,6 +182,6 @@ def weight_associated_movies(userId:int) -> dict:
 
 # print(top_recommendations(1))
 
-print(user_opinion_of_movie("Batman Begins", 1, 3))
-print(user_opinion_of_movie("Prometheus", 1, 4))
-print(user_opinion_of_movie("The Dark Knight", 1, 1))
+# print(user_opinion_of_movie("Batman Begins", 1, 3)) 
+# print(user_opinion_of_movie("Prometheus", 1, 4)) 
+# print(user_opinion_of_movie("The Dark Knight", 1, 1)) 

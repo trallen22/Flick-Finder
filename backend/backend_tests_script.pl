@@ -50,6 +50,19 @@ $curTest = `curl -X POST http://127.0.0.1:5000/login -d \'{ "username": "NOTta1"
 check_test($curTest, 2.2);
 
 
+#######################
+# Section 3: Rating api
+#######################
+# Test 3.1: this tests rating a movie; should return success 
+$curTest = `curl -X POST http://127.0.0.1:5000/movie/Prometheus/rating -d '{ "rating":"4" }' -H "Content-Type: application/json"`;
+
+########################
+# Section 4: Opinion api
+########################
+# Test 4.1: this tests favoriting a movie; should return success 
+$curTest = `curl -X POST http://127.0.0.1:5000/movie/Prometheus/opinion -d '{ "opinion":"4" }' -H "Content-Type: application/json"`;
+
+
 END {
     print("Tests passed: $passedTests/$numTests\n");
     if (!$passedTests) { # this is if no tests pass 

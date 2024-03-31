@@ -81,10 +81,9 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		curCast = f"{curCast}"
 		#crew
 		listCrew = eval(cRow["crew"])
-		curCrew = []
-		for character in listCrew:
-			curCrew.append(character["name"])
-		curCrew = f"{curCast}"
+		if listCrew:
+			curCrew = listCrew[0]["name"]
+		curCrew = f"{curCrew}"
 		# description (overview)
 		curOverview = mRow["overview"]
 		# keywords 

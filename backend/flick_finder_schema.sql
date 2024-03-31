@@ -8,7 +8,7 @@ create table movies (
 	title		VARCHAR(120), -- longest is 105
  	genres		VARCHAR(100), -- longest is 98 
 	cast 		VARCHAR(5180), -- longest is 5179
-	crew        VARCHAR(5180),
+	director    VARCHAR(150),
  	description	VARCHAR(1000), -- longest is 1000 
  	keywords	VARCHAR(1950), -- longest is 1901
 	runtime   INT,

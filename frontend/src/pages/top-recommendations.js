@@ -12,6 +12,7 @@ function TopRecommendations() {
 
     const fetchRecommendations = () => {
         fetch("/top-recommendations").then((res) => {
+            console.log(res);
             res.json().then((data) => {
                 // Setting data from API
                 console.log('here');

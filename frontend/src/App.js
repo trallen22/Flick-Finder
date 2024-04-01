@@ -6,11 +6,16 @@ import {
     BrowserRouter as Router,
     Routes,
     Route,
+	Navigate,
 } from "react-router-dom";
 import Movie from './pages/movie';
 import Home from './pages/home';
 import TopRecommendations from './pages/top-recommendations';
 import Profile from './pages/profile';
+import SignUp from './pages/signup';
+import LoginPage from './pages/login';
+import Logout from './pages/logout';
+
 
 function App() {
 
@@ -34,6 +39,22 @@ function App() {
 					<Route
 						exact path="/profile"
 						element={<Profile />}
+					></Route>
+					<Route 
+						exact path="/sign-up"
+						element={<SignUp />}
+					></Route>
+					<Route
+						exact path="/login"
+						element={<LoginPage />}
+					></Route>
+					<Route
+						exact path="/logout"
+						element={<Logout />}
+					></Route>
+					<Route
+						exact path="/user"
+						element={<Navigate to="/" />}
 					></Route>
 				</Routes>
 			</Router>

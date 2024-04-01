@@ -1,4 +1,3 @@
-from pydoc import describe
 from flask import Flask, request, jsonify, redirect, url_for
 from flask_cors import CORS
 from flask_restful import Resource, Api
@@ -12,7 +11,7 @@ app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_PASSWORD'] = 'Steelers19!'
 app.config['MYSQL_DB'] = 'FlickFinder'
 app.config['SECRET_KEY'] = 'secret1'
 
@@ -36,6 +35,7 @@ class Login(Resource):
         return
     def post(self):
         jsonData = request.get_json()
+        # TODO: need to add exception handling for KeyErrors 
         username = jsonData['username']
         password = jsonData['password']
 
@@ -84,8 +84,11 @@ class SignUp(Resource):
                 "movie2": { "title": "no title for movie 3", "description": "no description" }})
     def post(self):
         jsonData = request.get_json()
+        # TODO: need to add exception handling for KeyError
         username = jsonData["username"]
+        email = jsonData["email"]
         password = jsonData["password"]
+<<<<<<< HEAD
 
         try:
             if not username:
@@ -98,6 +101,20 @@ class SignUp(Resource):
         except Exception as e:
             signupStatus = {"error", str(e) }
         return {}
+=======
+        if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
+            retStatus = { "status": "failed", "details": "username already taken" }
+        elif len(sql_query("SELECT * FROM users WHERE email=%s", (email,))):
+            retStatus = { "status": "failed", "details": "email already taken" }
+        else: 
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            try:
+                sql_query("INSERT INTO users VALUES (%s, %s, %s, %s)", (None, username, hashed_password, email))
+                retStatus = { "status": "success", "details": "user successfully signed up"}
+            except Exception:
+                retStatus = { "status": "failed", "details": "error reaching database" }
+        return retStatus    
+>>>>>>> main
 
 class Movie(Resource):
     def get(self, movieName:str):
@@ -107,6 +124,11 @@ class TopRecommendations(Resource):
     @login_required
     def get(self):
         return top_recommendations()
+
+class RateMovie(Resource):
+    def post(self):
+        jsonData = request.json()
+
 
 api.add_resource(TopRecommendations, "/top-recommendations")
 api.add_resource(Movie, "/movie/<movieName>")

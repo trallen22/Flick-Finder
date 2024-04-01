@@ -35,23 +35,32 @@ class Login(Resource):
         return
     def post(self):
         jsonData = request.get_json()
-        # TODO: need to add exception handling for KeyErrors 
-        username = jsonData['username']
-        password = jsonData['password']
+        loginStatus = { "status": "", "details": "" }
+        missingInput = 0
+        try: 
+            username = jsonData['username']
+        except KeyError:
+            loginStatus = { "status": "failed", "details": "missing username" }
+            missingInput = 1
+        try:
+            password = jsonData['password']
+        except KeyError:
+            loginStatus = { "status": "failed", "details": "missing password" }
+            missingInput = 1
+        if not missingInput:
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
+            # TODO: need to add exception handling here as well if user not found 
+            user_data = cursor.fetchall()[0]
+            cursor.close()
 
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
-        # TODO: need to add exception handling here as well if user not found 
-        user_data = cursor.fetchall()[0]
-        cursor.close()
-
-        hashed_password = user_data[2]
-        is_valid = bcrypt.check_password_hash(hashed_password, password) 
-        if (is_valid):
-            login_user(User(user_data[0], user_data[1]))
-            loginStatus = { "status": "success" }
-        else:
-            loginStatus = { "status": "failed" }
+            hashed_password = user_data[2]
+            is_valid = bcrypt.check_password_hash(hashed_password, password) 
+            if (is_valid):
+                login_user(User(user_data[0], user_data[1]))
+                loginStatus = { "status": "success", "details": "user successfully logged in" }
+            else:
+                loginStatus = { "status": "failed", "details": "incorrect password" }
         return loginStatus
 
 class Logout(Resource):
@@ -76,7 +85,12 @@ class SignUp(Resource):
     def post(self):
         jsonData = request.get_json()
         # TODO: need to add exception handling for KeyError
-        username = jsonData["username"]
+        retStatus = { "status": "", "details": "" }
+        missingInput = 0
+        try: 
+            username = jsonData["username"]
+        except KeyError:
+            retStatus = { ""}
         email = jsonData["email"]
         password = jsonData["password"]
         retStatus = {}

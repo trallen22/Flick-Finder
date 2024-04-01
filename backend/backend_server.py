@@ -39,18 +39,28 @@ class Login(Resource):
         username = jsonData['username']
         password = jsonData['password']
 
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
-        user_data = cursor.fetchall()[0]
-        cursor.close()
+        try:
+            if not username:
+                raise ValueError("Username cannot be empty")
+            if not password:
+                raise ValueError("Password cannot be empty")
+            #should there be some call back to the login function
 
-        hashed_password = user_data[2]
-        is_valid = bcrypt.check_password_hash(hashed_password, password) 
-        if (is_valid):
-            login_user(User(user_data[0], user_data[1]))
-            loginStatus = { "status": "success" }
-        else:
-            loginStatus = { "status": "failed" }
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
+            user_data = cursor.fetchall()[0]
+            cursor.close()
+
+            hashed_password = user_data[2]
+            is_valid = bcrypt.check_password_hash(hashed_password, password) 
+            #add try, excepts, defaults, just in login and sign up, if there is none, it should fail, status failed
+            if (is_valid):
+                login_user(User(user_data[0], user_data[1]))
+                loginStatus = { "status": "success" }
+            else:
+                loginStatus = { "status": "failed" }
+        except Exception as e:
+            loginStatus = {"error": str(e) }
         return loginStatus
 
 class Logout(Resource):
@@ -76,8 +86,17 @@ class SignUp(Resource):
         jsonData = request.get_json()
         username = jsonData["username"]
         password = jsonData["password"]
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        sql_query("INSERT INTO users VALUES (%s, %s, %s)", (None, username, hashed_password))
+
+        try:
+            if not username:
+                raise ValueError("Username cannot be empty")
+            if not password:
+                raise ValueError("Password cannot be empty")
+
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            sql_query("INSERT INTO users VALUES (%s, %s, %s)", (None, username, hashed_password))
+        except Exception as e:
+            signupStatus = {"error", str(e) }
         return {}
 
 class Movie(Resource):

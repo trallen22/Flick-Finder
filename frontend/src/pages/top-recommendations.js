@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
+import Container from 'react-bootstrap/Container';
 import "../App.css";
 
 function TopRecommendations() {
@@ -45,35 +46,26 @@ function TopRecommendations() {
         <div className="recommend-wrapper">
             <Button variant="primary" onClick={fetchRecommendations} className="recommend-button">Recommend</Button>
             {(movieData != []) && (
-                // <ul className="recommendations">
-                // <ListGroup horizontal={'md'}>
-                //     {Object.keys(movieData).map((key, index) => (
-                //         // <li key={index}>
-                //         //     <Link to={`/movie/${movieData[key].title}`}>{movieData[key].title}</Link>
-                //         // </li>
-                //         <ListGroup.Item>
-                //             <Link to={`/movie/${movieData[key].title}`}>{movieData[key].title}</Link>
-                //         </ListGroup.Item>
-                //     ))}
-                // </ListGroup>
-                <CardGroup>
-                    {Object.keys(movieData).map((key, index) => (
-                        <Card key={index} style={{ width: '20%' }}>
-                            {movieData[key].posterURL && <Card.Img variant="top" className="movie-poster" src={movieData[key].posterURL} />}
-                            <Card.Body>
-                                <Card.Title>{movieData[key].title}</Card.Title>
-                                <Card.Text>
-                                    {movieData[key].description}  
-                                </Card.Text>
-                            </Card.Body>
-                            <ListGroup className="list-group-flush">
-                                <ListGroup.Item>{movieData[key].genre}</ListGroup.Item>
-                                {/* <ListGroup.Item>{movieData[key].keywords}</ListGroup.Item> */}
-                                <ListGroup.Item><Link to={`/movie/${movieData[key].title}`}>{movieData[key].title}</Link></ListGroup.Item>
-                            </ListGroup>
-                        </Card>
-                    ))}
-                </CardGroup>
+                <Container>
+                    <CardGroup>
+                        {Object.keys(movieData).map((key, index) => (
+                            <Card key={index} style={{ width: '20%' }}>
+                                {movieData[key].posterURL && <Card.Img variant="top" className="movie-poster" src={movieData[key].posterURL} />}
+                                <Card.Body>
+                                    <Card.Title>{movieData[key].title}</Card.Title>
+                                    <Card.Text>
+                                        {movieData[key].description}  
+                                    </Card.Text>
+                                </Card.Body>
+                                <ListGroup className="list-group-flush">
+                                    <ListGroup.Item>{movieData[key].genre}</ListGroup.Item>
+                                    {/* <ListGroup.Item>{movieData[key].keywords}</ListGroup.Item> */}
+                                    <ListGroup.Item><Link to={`/movie/${movieData[key].title}`}>{movieData[key].title}</Link></ListGroup.Item>
+                                </ListGroup>
+                            </Card>
+                        ))}
+                    </CardGroup>
+                </Container>
 
             )}
         </div>

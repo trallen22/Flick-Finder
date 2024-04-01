@@ -18,8 +18,7 @@ USER = 'root'
 DATABASE = "FlickFinder"
 META_FILENAME = "movie-data-csv/movies_metadata.csv"
 KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
-CREDITS_FILENAME = "movie-data-csv/credits.csv"
-# PASSWORD = '123456'
+PASSWORD = '123456'
 
 
 # sqlInsert: executes a SQL insert statement on a given table
@@ -44,7 +43,12 @@ def sqlInsert(curCursor, table, curTuple):
 os.system(f'mysql FlickFinder < "{os.getcwd()}/flick_finder_schema.sql"')
 
 try: 
+<<<<<<< HEAD
 	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) 
+=======
+	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
+	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
+>>>>>>> main
 except Exception as e:
 	print(f'error: {e}')
 	sys.exit()
@@ -79,6 +83,11 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		for character in listCast:
 			curCast.append(character["name"])
 		curCast = f"{curCast}"
+		#crew
+		listCrew = eval(cRow["crew"])
+		if listCrew:
+			curCrew = listCrew[0]["name"]
+		curCrew = f"{curCrew}"
 		# description (overview)
 		curOverview = mRow["overview"]
 		# keywords 
@@ -91,7 +100,7 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		curRuntime = mRow["runtime"] if mRow["runtime"] != '' else -1
 		# release date
 		curReleaseDate = mRow["release_date"] if mRow["release_date"] != '' else '0001-01-01'
-		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curOverview, curKeywords, curRuntime, curReleaseDate))
+		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curCrew, curOverview, curKeywords, curRuntime, curReleaseDate))
 		pbar.update(1)
 		
 connection.commit()

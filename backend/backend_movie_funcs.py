@@ -4,16 +4,30 @@ import sys
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
+<<<<<<< HEAD
 # PASSWORD = 'Steelers19!'
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
 		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) 
+=======
+PASSWORD = '123456'
+
+def sql_query(sqlString:str, sqlTuple:tuple) -> list:
+	try: 
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
+>>>>>>> main
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()
 	cursor = connection.cursor()
 	cursor.execute(sqlString, sqlTuple)
+	curMovies = []
+	if (sqlString.split()[0] == 'SELECT'):
+		fetched = cursor.fetchall()
+		columns = [col[0] for col in cursor.description]
+		curMovies = [dict(zip(columns, row)) for row in fetched]
 	curMovies = []
 	if (sqlString.split()[0] == 'SELECT'):
 		fetched = cursor.fetchall()
@@ -58,6 +72,7 @@ def top_recommendations(userId:int) -> dict:
 	# TODO: need to define behavior if user is not logged in 
 	NUM_REC_MOVIES = 5
 	movieDict = {}
+<<<<<<< HEAD
 	userRecsDict = weight_associated_movies(userId)
 	userRecsIdList = list(userRecsDict.keys())[:NUM_REC_MOVIES]
 	userRecsTitleList = []
@@ -65,6 +80,12 @@ def top_recommendations(userId:int) -> dict:
 		userRecsTitleList.append(get_movie_title_by_id(curMovId))
 	for i in range(len(userRecsTitleList)):
 		movieDict[f"movie{i}"] = get_movie_details_by_name(userRecsTitleList[i])
+=======
+	# TODO: implement ml model here 
+	listMovies = ['prisoners', 'star_wars', 'snatch']
+	for i in range(len(listMovies)):
+		movieDict[f"movie{i}"] = get_movie_by_name(listMovies[i])
+>>>>>>> main
 	return movieDict
 
 # puts the user rating and associated movie information into the reviews table
@@ -86,6 +107,7 @@ def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 		sql_query(rateStr, (userId, movieId, userRating, '0000-01-01'))
 	return 
 
+<<<<<<< HEAD
 # TODO: need to look into how to represent userOpinion, I think int is the best way   
 # --> could make dislike = 2, like = 3, favorite = 4, check opinion = 1, 0 to remove an opinion from db 
 # TODO: should getting user opinion be it's own function? I think no 
@@ -185,3 +207,22 @@ def weight_associated_movies(userId:int) -> dict:
 # print(user_opinion_of_movie("Batman Begins", 1, 3)) 
 # print(user_opinion_of_movie("Prometheus", 1, 4)) 
 # print(user_opinion_of_movie("The Dark Knight", 1, 1)) 
+=======
+# print(rate_movie('prometheus', 1, 4.5))
+# puts the user rating and associated movie information into the reviews table
+def rate_movie(movieName:str, userId:int, userRating:float) -> None:
+	movieTitle = movieName.replace('_', ' ')
+	movieStr = "SELECT movie_id FROM movies WHERE title=%s;"
+	movieInfo = sql_query(movieStr, (movieTitle,))[0]
+	checkStr = "SELECT * FROM reviews WHERE movie_id=%s AND user_id=%s;"
+	check = sql_query(checkStr, (movieInfo["movie_id"], userId))
+	if len(check):
+		updateStr = "UPDATE reviews SET rating=%s WHERE movie_id=%s;"
+		sql_query(updateStr, (userRating, movieInfo["movie_id"]))
+	else:
+		rateStr = "INSERT INTO reviews VALUES (%s, %s, %s, %s)"
+		sql_query(rateStr, (userId, movieInfo['movie_id'], userRating, '0000-01-01'))
+	return 
+
+# print(rate_movie('prometheus', 1, 4.5))
+>>>>>>> main

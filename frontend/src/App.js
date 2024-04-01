@@ -1,7 +1,7 @@
 // import logo from './logo.svg';
 import './App.css';
-
 import Navbar from './components/navbar/navbar-index';
+import ReactDOM from "react-dom/client";
 import {
     BrowserRouter as Router,
     Routes,
@@ -11,6 +11,7 @@ import {
 import Movie from './pages/movie';
 import Home from './pages/home';
 import TopRecommendations from './pages/top-recommendations';
+import Profile from './pages/profile';
 import SignUp from './pages/signup';
 import LoginPage from './pages/login';
 import Logout from './pages/logout';
@@ -34,6 +35,10 @@ function App() {
 					<Route
 						path="/movie/*"
 						element={<Movie />}
+					></Route>
+					<Route
+						exact path="/profile"
+						element={<Profile />}
 					></Route>
 					<Route 
 						exact path="/sign-up"

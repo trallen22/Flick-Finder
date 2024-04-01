@@ -16,10 +16,16 @@ HOST = 'localhost'
 USER = 'root'
 PASSWORD = 'Steelers19!'
 DATABASE = "FlickFinder"
-META_FILENAME = "movies_metadata.csv"
-KEYWORD_FILENAME = "keywords.csv"
-CREDITS_FILENAME = "credits.csv"
-# PASSWORD = '123456'
+
+#Original data set file links
+# META_FILENAME = "movie-data-csv/movies_metadata.csv"
+# KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
+
+#Changed file names to match mine CSV files
+META_FILENAME = "movie-data-csv/movies_metadata.csv"
+KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
+# FOR OTHER USERS, Please change the password to '123456' to use
+PASSWORD = '123456'
 
 
 # sqlInsert: executes a SQL insert statement on a given table
@@ -79,6 +85,11 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		for character in listCast:
 			curCast.append(character["name"])
 		curCast = f"{curCast}"
+		#crew
+		listCrew = eval(cRow["crew"])
+		if listCrew:
+			curCrew = listCrew[0]["name"]
+		curCrew = f"{curCrew}"
 		# description (overview)
 		curOverview = mRow["overview"]
 		# keywords 
@@ -91,7 +102,7 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		curRuntime = mRow["runtime"] if mRow["runtime"] != '' else -1
 		# release date
 		curReleaseDate = mRow["release_date"] if mRow["release_date"] != '' else '0001-01-01'
-		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curOverview, curKeywords, curRuntime, curReleaseDate))
+		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curCrew, curOverview, curKeywords, curRuntime, curReleaseDate))
 		pbar.update(1)
 		
 connection.commit()

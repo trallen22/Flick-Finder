@@ -1,70 +1,41 @@
-import React, { useEffect, useState } from "react";
-import {
-    Nav,
-    NavLink,
-    Bars,
-    NavMenu,
-    NavBtn,
-    NavBtnLink,
-} from "./navbar-elements";
-import { useNavigate } from "react-router-dom";
- 
-const Navbar = () => {
+import React from "react";
+import Navbar from 'react-bootstrap/Navbar';
+import Container from 'react-bootstrap/Container';
+import Nav from 'react-bootstrap/Nav';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+// import InputGroup from 'react-bootstrap/InputGroup';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import "../../App.css";
 
-    const [userID, setUserID] = useState({
-        user_id: '-1'
-      });
-    
-      const navigate = useNavigate();
-    
-      useEffect(() => {
-        fetch('/get_user')
-          .then((res) => res.json())
-          .then((data) => {
-            setUserID(data);
-            // Push a new entry onto the history stack with the user ID in the URL
-            navigate.push(`/user/${data.user_id}`);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }, [navigate]);
-
+const NavbarFF = () => {
     return (
-        <>
-            <Nav>
-                <Bars />
-                <NavMenu>
-                    <NavLink to="/home" activeStyle>
-                        Home
-                    </NavLink>
-                    <NavLink to="/top-recommendations" activeStyle>
-                        Top Recommendations
-                    </NavLink>
-                    <NavLink to="/sign-up" activeStyle>
-                        Sign Up
-                    </NavLink>
-                    {/* Second Nav */}
-                    {/* <NavBtnLink to='/sign-in'>Sign In</NavBtnLink> */}
-                </NavMenu>
-                <NavBtn>
-                    <NavBtnLink to="/login">
-                        Login
-                    </NavBtnLink>
-                </NavBtn>
-                <NavBtn>
-                    <NavBtnLink to="/logout">
-                        Logout
-                    </NavBtnLink>
-                </NavBtn>
-                <NavBtn>
-                    <NavBtnLink to="/user">
-                        {userID.user_id}
-                    </NavBtnLink>
-                </NavBtn>
-            </Nav>
-        </>
+        <Navbar bg="dark" data-bs-theme="dark" className="nav-bar-ff">
+            <Container>
+                <Navbar.Brand href="/home">Flick Finder</Navbar.Brand>
+                <Nav className="me-auto">
+                    <Nav.Link href="/home">Home</Nav.Link>
+                    <Nav.Link href="/top-recommendations">Recommendations</Nav.Link>
+                    <Nav.Link href="/profile">Profile</Nav.Link>
+                </Nav>
+                <Form inline="true">
+                    <Row>
+                        <Col xs="auto">
+                            <Form.Control
+                            type="text"
+                            placeholder="Search"
+                            className=" mr-sm-2"
+                            />
+                        </Col>
+                        <Col xs="auto">
+                            <Button type="submit">Submit</Button>
+                        </Col>
+                    </Row>
+                </Form>
+            </Container>
+        </Navbar>
     );
 };
- 
-export default Navbar;
+
+export default NavbarFF;

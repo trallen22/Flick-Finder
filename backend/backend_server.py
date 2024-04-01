@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_movie_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie
+from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie
 
 app = Flask(__name__)
 

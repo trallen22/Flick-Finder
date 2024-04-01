@@ -5,13 +5,13 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_movie_funcs import top_recommendations, get_movie_by_name, sql_query
+from backend_movie_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie
 
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Steelers19!'
+# app.config['MYSQL_PASSWORD'] = 'Steelers19!'
 app.config['MYSQL_DB'] = 'FlickFinder'
 app.config['SECRET_KEY'] = 'secret1'
 
@@ -39,12 +39,20 @@ class Login(Resource):
         username = jsonData['username']
         password = jsonData['password']
 
+<<<<<<< HEAD
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
+        # TODO: need to add exception handling here as well if user not found 
+        user_data = cursor.fetchall()[0]
+        cursor.close()
+=======
         try:
             if not username:
                 raise ValueError("Username cannot be empty")
             if not password:
                 raise ValueError("Password cannot be empty")
             #should there be some call back to the login function
+>>>>>>> main
 
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
@@ -89,6 +97,9 @@ class SignUp(Resource):
         email = jsonData["email"]
         password = jsonData["password"]
 <<<<<<< HEAD
+        if len(sql_query("SELECT * FROM users WHERE username=%s;", (username,))):
+=======
+<<<<<<< HEAD
 
         try:
             if not username:
@@ -103,13 +114,14 @@ class SignUp(Resource):
         return {}
 =======
         if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
+>>>>>>> main
             retStatus = { "status": "failed", "details": "username already taken" }
-        elif len(sql_query("SELECT * FROM users WHERE email=%s", (email,))):
+        elif len(sql_query("SELECT * FROM users WHERE email=%s;", (email,))):
             retStatus = { "status": "failed", "details": "email already taken" }
         else: 
             hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
             try:
-                sql_query("INSERT INTO users VALUES (%s, %s, %s, %s)", (None, username, hashed_password, email))
+                sql_query("INSERT INTO users VALUES (%s, %s, %s, %s);", (None, username, hashed_password, email))
                 retStatus = { "status": "success", "details": "user successfully signed up"}
             except Exception:
                 retStatus = { "status": "failed", "details": "error reaching database" }
@@ -117,17 +129,44 @@ class SignUp(Resource):
 >>>>>>> main
 
 class Movie(Resource):
-    def get(self, movieName:str):
-        return get_movie_by_name(movieName)
+    def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
+        return get_movie_details_by_name(movieName)
 
 class TopRecommendations(Resource):
-    @login_required
+    # @login_required
     def get(self):
-        return top_recommendations()
+        # TODO: need to figure out how to handle if no user is logged in 
+        # currently returns random movies
+        try: 
+            curUserId = current_user.id
+        except Exception as e:
+            curUserId = -1
+        return top_recommendations(curUserId)
 
+# TODO: need to implement GET reqeust and clean up POST
 class RateMovie(Resource):
-    def post(self):
+    def post(self, movieName):
         jsonData = request.json()
+        userRating = float(jsonData['rating'])
+        try:
+            curUserId = current_user.id
+        except Exception as e:
+            curUserId = -1
+        # return rate_movie(movieTitle, curUserId, userRating)
+        return rate_movie(movieName, 1, userRating)
+
+# TODO: need to implement like/dislike/favorite GET
+class UserOpinion(Resource): 
+    def post(self, movieName:str):
+        jsonData = request.get_json()
+        userOpinion = int(jsonData['opinion'])
+        try:
+            curUserId = current_user.id
+        except Exception as e:
+            curUserId = -1
+        # TODO: need logic if user not logged in 
+        # return user_opinion_of_movie(movieTitle, curUserId, userOpinion) 
+        return user_opinion_of_movie(movieName, 1, userOpinion) 
 
 
 api.add_resource(TopRecommendations, "/top-recommendations")
@@ -136,6 +175,10 @@ api.add_resource(SignUp, "/sign-up")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
 api.add_resource(GetUser, "/get_user")
+# TODO: need to decide how to setup url; /movie/<movieName>/rating or /rating/<movieName>; 
+#       former might be easier to implement with react useLocation() 
+api.add_resource(RateMovie, "/movie/<movieName>/rating")
+api.add_resource(UserOpinion, "/movie/<movieName>/opinion")
 
 if __name__ == "__main__":
     app.run(debug=True)

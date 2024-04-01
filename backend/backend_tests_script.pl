@@ -54,14 +54,15 @@ check_test($curTest, 2.2);
 # Section 3: Rating api
 #######################
 # Test 3.1: this tests rating a movie; should return success 
-$curTest = `curl -X POST http://127.0.0.1:5000/movie/Prometheus/rating -d '{ "rating":"4" }' -H "Content-Type: application/json"`;
+$curTest = `curl -X POST http://127.0.0.1:5000/movie/Prometheus/rating -d '{ "rating":"4" }' -H "Content-Type: application/json" 2>$nullFile | grep success`;
+check_test($curTest, 3.1);
 
 ########################
 # Section 4: Opinion api
 ########################
 # Test 4.1: this tests favoriting a movie; should return success 
-$curTest = `curl -X POST http://127.0.0.1:5000/movie/Prometheus/opinion -d '{ "opinion":"4" }' -H "Content-Type: application/json"`;
-
+$curTest = `curl -X POST http://127.0.0.1:5000/movie/Prometheus/opinion -d '{ "opinion":"4" }' -H "Content-Type: application/json" 2>$nullFile | grep success`;
+check_test($curTest, 4.1);
 
 END {
     print("Tests passed: $passedTests/$numTests\n");

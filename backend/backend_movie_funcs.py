@@ -4,16 +4,22 @@ import sys
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-PASSWORD = 'Steelers19!'
+PASSWORD = '123456'
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
 		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()
 	cursor = connection.cursor()
 	cursor.execute(sqlString, sqlTuple)
+	curMovies = []
+	if (sqlString.split()[0] == 'SELECT'):
+		fetched = cursor.fetchall()
+		columns = [col[0] for col in cursor.description]
+		curMovies = [dict(zip(columns, row)) for row in fetched]
 	curMovies = []
 	if (sqlString.split()[0] == 'SELECT'):
 		fetched = cursor.fetchall()
@@ -47,11 +53,27 @@ def get_movie_by_name(movieName:str) -> dict:
 def top_recommendations() -> dict:
 	movieDict = {}
 	# TODO: implement ml model here 
-	listMovies = ['prometheus', 'star_wars', 'snatch']
+	listMovies = ['prisoners', 'star_wars', 'snatch']
 	for i in range(len(listMovies)):
 		movieDict[f"movie{i}"] = get_movie_by_name(listMovies[i])
 	return movieDict
 
+# puts the user rating and associated movie information into the reviews table
+def rate_movie(movieName:str, userId:int, userRating:float) -> None:
+	movieTitle = movieName.replace('_', ' ')
+	movieStr = "SELECT movie_id FROM movies WHERE title=%s;"
+	movieInfo = sql_query(movieStr, (movieTitle,))[0]
+	checkStr = "SELECT * FROM reviews WHERE movie_id=%s AND user_id=%s;"
+	check = sql_query(checkStr, (movieInfo["movie_id"], userId))
+	if len(check):
+		updateStr = "UPDATE reviews SET rating=%s WHERE movie_id=%s;"
+		sql_query(updateStr, (userRating, movieInfo["movie_id"]))
+	else:
+		rateStr = "INSERT INTO reviews VALUES (%s, %s, %s, %s)"
+		sql_query(rateStr, (userId, movieInfo['movie_id'], userRating, '0000-01-01'))
+	return 
+
+# print(rate_movie('prometheus', 1, 4.5))
 # puts the user rating and associated movie information into the reviews table
 def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 	movieTitle = movieName.replace('_', ' ')

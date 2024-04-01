@@ -7,13 +7,44 @@
   pointer-events: none;
 }
 
+.nav-bar-ff{
+  position: fixed;
+  top: 0;
+}
+
+.recommend-wrapper{
+  text-align: center;
+}
+
+.movie-poster{
+  height: 400px;
+}
+
+
+.profile-header{
+  align-items: center;
+  text-align: center;
+  color: white;
+  /* background-color: #657c68; */
+  height: 250px;
+}
+
+.picture-container{
+  margin-top: 30px;
+}
+
+#profile-picture{
+  height: 100px;
+  width: 100px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
 
-.App-header {
+/* .App-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -22,7 +53,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-}
+} */
 
 .App-link {
   color: #61dafb;

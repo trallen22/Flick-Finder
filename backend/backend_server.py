@@ -39,20 +39,17 @@ class Login(Resource):
         username = jsonData['username']
         password = jsonData['password']
 
-<<<<<<< HEAD
         cursor = mysql.connection.cursor()
         cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
         # TODO: need to add exception handling here as well if user not found 
         user_data = cursor.fetchall()[0]
         cursor.close()
-=======
         try:
             if not username:
                 raise ValueError("Username cannot be empty")
             if not password:
                 raise ValueError("Password cannot be empty")
             #should there be some call back to the login function
->>>>>>> main
 
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
@@ -96,25 +93,8 @@ class SignUp(Resource):
         username = jsonData["username"]
         email = jsonData["email"]
         password = jsonData["password"]
-<<<<<<< HEAD
-        if len(sql_query("SELECT * FROM users WHERE username=%s;", (username,))):
-=======
-<<<<<<< HEAD
-
-        try:
-            if not username:
-                raise ValueError("Username cannot be empty")
-            if not password:
-                raise ValueError("Password cannot be empty")
-
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            sql_query("INSERT INTO users VALUES (%s, %s, %s)", (None, username, hashed_password))
-        except Exception as e:
-            signupStatus = {"error", str(e) }
-        return {}
-=======
+        retStatus = {}
         if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
->>>>>>> main
             retStatus = { "status": "failed", "details": "username already taken" }
         elif len(sql_query("SELECT * FROM users WHERE email=%s;", (email,))):
             retStatus = { "status": "failed", "details": "email already taken" }
@@ -125,8 +105,7 @@ class SignUp(Resource):
                 retStatus = { "status": "success", "details": "user successfully signed up"}
             except Exception:
                 retStatus = { "status": "failed", "details": "error reaching database" }
-        return retStatus    
->>>>>>> main
+        return retStatus  
 
 class Movie(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 

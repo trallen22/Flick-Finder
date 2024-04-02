@@ -14,7 +14,7 @@ from nltk.corpus import wordnet
 from surprise import Reader, Dataset, SVD, accuracy
 from surprise.model_selection import cross_validate, KFold
 import warnings; warnings.simplefilter('ignore')
-from backend_movie_funcs import sql_query, get_movie_id_by_title
+from backend_funcs import sql_query, get_movie_id_by_title
 from tqdm import tqdm 
 
 META_FILENAME = "movie-data-csv/movies_metadata.csv"

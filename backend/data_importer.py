@@ -44,7 +44,11 @@ def sqlInsert(curCursor, table, curTuple):
 os.system(f'mysql FlickFinder < "{os.getcwd()}/flick_finder_schema.sql"')
 
 try: 
+<<<<<<< Updated upstream
 	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
+=======
+	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) 
+>>>>>>> Stashed changes
 except Exception as e:
 	print(f'error: {e}')
 	sys.exit()

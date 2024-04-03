@@ -12,7 +12,7 @@ function Profile() {
         <Container className="profile-container">
             <Row className="profile-header">
                 <Col className="col-12 mt-5">
-                    <Image src="img/headshot.jpeg" id="profile-picture" roundedCircle />
+                    <Image src="img/default.jpeg" id="profile-picture" roundedCircle />
                 </Col>
                 <Col className="col-12">
                     <h1 id="user-name">

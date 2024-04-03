@@ -84,28 +84,36 @@ class SignUp(Resource):
                 "movie2": { "title": "no title for movie 3", "description": "no description" }})
     def post(self):
         jsonData = request.get_json()
-        # TODO: need to add exception handling for KeyError
-        retStatus = { "status": "", "details": "" }
+        signupStatus = { "status": "", "details": "" }
         missingInput = 0
         try: 
-            username = jsonData["username"]
+            username = jsonData['username']
         except KeyError:
-            retStatus = { ""}
-        email = jsonData["email"]
-        password = jsonData["password"]
-        retStatus = {}
-        if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
-            retStatus = { "status": "failed", "details": "username already taken" }
-        elif len(sql_query("SELECT * FROM users WHERE email=%s;", (email,))):
-            retStatus = { "status": "failed", "details": "email already taken" }
-        else: 
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            try:
-                sql_query("INSERT INTO users VALUES (%s, %s, %s, %s);", (None, username, hashed_password, email))
-                retStatus = { "status": "success", "details": "user successfully signed up"}
-            except Exception:
-                retStatus = { "status": "failed", "details": "error reaching database" }
-        return retStatus  
+            signupStatus = { "status": "failed", "details": "missing username" }
+            missingInput = 1
+        try:
+            password = jsonData['password']
+        except KeyError:
+            signupStatus = { "status": "failed", "details": "missing password" }
+            missingInput = 1
+        try:
+            email = jsonData['email']
+        except KeyError:
+            signupStatus = { "status": "failed", "details": "missing email" }
+            missingInput = 1
+        if not missingInput:
+            if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
+                signupStatus = { "status": "failed", "details": "username already taken" }
+            elif len(sql_query("SELECT * FROM users WHERE email=%s;", (email,))):
+                signupStatus = { "status": "failed", "details": "email already taken" }
+            else: 
+                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+                try:
+                    sql_query("INSERT INTO users VALUES (%s, %s, %s, %s);", (None, username, hashed_password, email))
+                    signupStatus = { "status": "success", "details": "user successfully signed up" }
+                except Exception:
+                    signupStatus = { "status": "failed", "details": "error reaching database" }
+        return signupStatus  
 
 class Movie(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
@@ -131,6 +139,7 @@ class RateMovie(Resource):
             curUserId = current_user.id
         except Exception as e:
             curUserId = -1
+        # TODO: need logic if user not logged in 
         # return rate_movie(movieTitle, curUserId, userRating)
         return rate_movie(movieName, 1, userRating)
 

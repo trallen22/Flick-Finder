@@ -173,15 +173,16 @@ def weight_associated_movies(userId:int) -> dict:
 # ##############
 # Used for testing 
 # print("don't forget to comment the code below!!") 
-# rate_movie("Prometheus", 1, 5)
-# rate_movie("Finding Nemo", 1, 1)
-# rate_movie("Forrest Gump", 1, 2)
-# rate_movie("Walk on Water", 1, 1)
-# rate_movie("The Dark Knight", 1, 5)
-# rate_movie("Batman Begins", 1, 5)
+# CUR_USER = 1
+# rate_movie("Prometheus", CUR_USER, 5)
+# rate_movie("Finding Nemo", CUR_USER, 1)
+# rate_movie("Forrest Gump", CUR_USER, 2)
+# rate_movie("Walk on Water", CUR_USER, 1)
+# rate_movie("The Dark Knight", CUR_USER, 5)
+# rate_movie("Batman Begins", CUR_USER, 5)
 
-# print(top_recommendations(1))
+# print(top_recommendations(CUR_USER))
 
-# print(user_opinion_of_movie("Batman Begins", 1, 3)) 
-# print(user_opinion_of_movie("Prometheus", 1, 4)) 
-# print(user_opinion_of_movie("The Dark Knight", 1, 1)) 
+# print(user_opinion_of_movie("Batman Begins", CUR_USER, 3)) 
+# print(user_opinion_of_movie("Prometheus", CUR_USER, 4)) 
+# print(user_opinion_of_movie("The Dark Knight", CUR_USER, 1)) 

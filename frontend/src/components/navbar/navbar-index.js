@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -9,7 +9,8 @@ import Col from 'react-bootstrap/Col';
 import "../../App.css";
 
 const NavbarFF = () => {
-    
+    const [val, setVal] = useState("");
+
     return (
         <Navbar bg="dark" data-bs-theme="dark" className="nav-bar-ff">
             <Container>
@@ -23,13 +24,15 @@ const NavbarFF = () => {
                     <Row>
                         <Col xs="auto">
                             <Form.Control
-                            type="text"
-                            placeholder="Enter Movie"
-                            className=" mr-sm-2"
+                                type="text"
+                                placeholder="Enter Movie"
+                                className="mr-sm-2"
+                                value={val}
+                                onChange={e => setVal(e.target.value)}
                             />
                         </Col>
                         <Col xs="auto">
-                            <Button type="submit" href={"/search-movies"}>Search</Button>
+                            <Button type="submit" href={`/search-movies/${val}`}>Search</Button>
                         </Col>
                     </Row>
                 </Form>
@@ -39,3 +42,4 @@ const NavbarFF = () => {
 };
 
 export default NavbarFF;
+

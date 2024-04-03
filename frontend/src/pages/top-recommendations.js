@@ -10,6 +10,8 @@ function TopRecommendations() {
   const fetchRecommendations = () => {
     fetch("/top-recommendations").then((res) => {
       res.json().then((data) => {
+        console.log('hello')
+        console.log(data)
         const promises = Object.values(data).map(movie => {
           return fetch(`https://api.themoviedb.org/3/search/movie?api_key=1b8a109c8da35481eb8e3f6a4d977ace&query=${encodeURIComponent(movie.title)}`)
             .then(res => res.json())

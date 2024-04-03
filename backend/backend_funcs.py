@@ -4,11 +4,11 @@ import sys
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-# PASSWORD = 'Steelers19!'
+PASSWORD = '123456'
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
-		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) 
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD)
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()
@@ -41,11 +41,43 @@ def get_movie_details_by_name(movieName:str) -> dict:
 		curMovie = curMovies[0] # this checks if movie with given title is found in db
 		movieDict = {"title":curMovie["title"], 
 					"description":curMovie["description"],
-					"genre":curMovie['genres']}
+					"genre":curMovie['genres'],
+					"id":curMovie["movie_id"]}
 	except IndexError:
-		movieDict = {"title":f"no movie found with title '{movieName}'", 
+		movieDict = {"title":f"no movie found with id '{movieName}'", 
 					"description":"no description available", 
-					"genre":"no genres available"}
+					"genre":"no genres available",
+					"id":"no id available"}
+	return movieDict
+
+def get_movie_details_by_id(movieId) -> dict:
+	movieDict = {}
+	sqlStr = "SELECT * FROM movies WHERE movie_id=%s;"
+	curMovies = sql_query(sqlStr, (movieId,))
+	try:
+		curMovie = curMovies[0] # this checks if movie with given title is found in db
+		movieDict = {"title":curMovie["title"], 
+					"description":curMovie["description"],
+					"genre":curMovie['genres'],
+					"id":curMovie["movie_id"]}
+	except IndexError:
+		movieDict = {"title":f"no movie found with id '{movieId}'", 
+					"description":"no description available", 
+					"genre":"no genres available",
+					"id":"no id available"}
+	return movieDict
+
+def search_movie_by_name(movieName:str) -> dict:
+	movieDict = {}
+	movieList = []
+	movieTitle = movieName.replace('_', ' ')
+	sqlStr = "SELECT * FROM movies WHERE title=%s;"
+	curMovies = sql_query(sqlStr, (movieTitle,))
+	i = 0
+	for curMovie in curMovies:
+		print(curMovie["movie_id"])
+		movieDict[f"movie{i}"] = get_movie_details_by_id(curMovie["movie_id"])
+		i += 1
 	return movieDict
 
 # top_recommendations: returns a dictionary of the 

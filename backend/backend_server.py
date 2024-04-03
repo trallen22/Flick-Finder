@@ -162,7 +162,7 @@ api.add_resource(Movie, "/movie/<movieName>")
 api.add_resource(SignUp, "/sign-up")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
-api.add_resource(GetUser, "/get_user")
+api.add_resource(GetUser, "/get-user")
 # TODO: need to decide how to setup url; /movie/<movieName>/rating or /rating/<movieName>; 
 #       former might be easier to implement with react useLocation() 
 api.add_resource(RateMovie, "/movie/<movieName>/rating")

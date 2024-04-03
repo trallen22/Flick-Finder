@@ -33,6 +33,10 @@ const NavbarFF = () => {
                         </Col>
                     </Row>
                 </Form>
+                <Nav className="me-auto">
+                    <Nav.Link href="/logout">Logout</Nav.Link>
+                    <Nav.Link href="/login">Login</Nav.Link>
+                </Nav>
             </Container>
         </Navbar>
     );

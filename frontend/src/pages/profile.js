@@ -8,6 +8,22 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 function Profile() {
+
+    const [curUser, setUser] = useState({
+        user_id: "-1"
+    });
+    
+    useEffect(() => {
+        fetch("/get-user").then((res) => {
+            res.json().then((data) => {
+                setUser(data);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        });
+    }, []);
+
     return (
         <Container className="profile-container">
             <Row className="profile-header">
@@ -16,7 +32,7 @@ function Profile() {
                 </Col>
                 <Col className="col-12">
                     <h1 id="user-name">
-                        @Username
+                        {curUser.user_id}
                     </h1>
                 </Col>
             </Row>

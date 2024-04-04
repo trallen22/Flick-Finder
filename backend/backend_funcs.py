@@ -131,7 +131,11 @@ def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
 	movieId = get_movie_id_by_title(movieTitle)
 	# checking if movie has already been liked/disliked/favorited  
 	checkStr = "SELECT is_liked FROM likes WHERE movie_id=%s AND user_id=%s;"
+	
 	check = sql_query(checkStr, (movieId, userId))
+	print(movieId)
+	print(userId)
+	print(userOpinion)
 	# TODO: Do we want to implement the date of liking a movie? 
 	if userOpinion > 1:
 		if len(check):

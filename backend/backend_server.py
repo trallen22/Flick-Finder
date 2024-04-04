@@ -111,7 +111,7 @@ class TopRecommendations(Resource):
 # TODO: need to implement GET reqeust and clean up POST
 class RateMovie(Resource):
     def post(self, movieName):
-        jsonData = request.json()
+        jsonData = request.get_json()
         userRating = float(jsonData['rating'])
         try:
             curUserId = current_user.id
@@ -146,8 +146,8 @@ api.add_resource(Logout, "/logout")
 api.add_resource(GetUser, "/get_user")
 # TODO: need to decide how to setup url; /movie/<movieName>/rating or /rating/<movieName>; 
 #       former might be easier to implement with react useLocation() 
-api.add_resource(RateMovie, "/movie/<movieName>/rating")
-api.add_resource(UserOpinion, "/movie/<movieName>/opinion")
+api.add_resource(RateMovie, "/movie/<movieName>/rating") # TODO: change these to id in case there are movies with duplicate names
+api.add_resource(UserOpinion, "/movie/<movieName>/opinion") # TODO: same ^
 api.add_resource(MovieSearch, "/search-movies/<movieName>")
 
 if __name__ == "__main__":

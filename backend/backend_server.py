@@ -35,23 +35,37 @@ class Login(Resource):
         return
     def post(self):
         jsonData = request.get_json()
-        # TODO: need to add exception handling for KeyErrors 
-        username = jsonData['username']
-        password = jsonData['password']
-
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
-        # TODO: need to add exception handling here as well if user not found 
-        user_data = cursor.fetchall()[0]
-        cursor.close()
-
-        hashed_password = user_data[2]
-        is_valid = bcrypt.check_password_hash(hashed_password, password) 
-        if (is_valid):
-            login_user(User(user_data[0], user_data[1]))
-            loginStatus = { "status": "success" }
-        else:
-            loginStatus = { "status": "failed" }
+        loginStatus = { "status": "", "details": "" }
+        missingInput = 0
+        try: 
+            username = jsonData['username']
+        except KeyError:
+            loginStatus = { "status": "failed", "details": "missing username" }
+            missingInput = 1
+        try:
+            password = jsonData['password']
+        except KeyError:
+            loginStatus = { "status": "failed", "details": "missing password" }
+            missingInput = 1
+        if not missingInput:
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
+            # TODO: need to add exception handling here as well if user not found 
+            foundUser = 1
+            try:
+                user_data = cursor.fetchall()[0]
+            except: 
+                loginStatus = { "status": "failed", "details": "username not found" }
+                foundUser = 0
+            cursor.close()
+            if foundUser:
+                hashed_password = user_data[2]
+                is_valid = bcrypt.check_password_hash(hashed_password, password) 
+                if (is_valid):
+                    login_user(User(user_data[0], user_data[1]))
+                    loginStatus = { "status": "success", "details": "user successfully logged in" }
+                else:
+                    loginStatus = { "status": "failed", "details": "incorrect password" }
         return loginStatus
 
 class Logout(Resource):
@@ -75,23 +89,36 @@ class SignUp(Resource):
                 "movie2": { "title": "no title for movie 3", "description": "no description" }})
     def post(self):
         jsonData = request.get_json()
-        # TODO: need to add exception handling for KeyError
-        username = jsonData["username"]
-        email = jsonData["email"]
-        password = jsonData["password"]
-        retStatus = {}
-        if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
-            retStatus = { "status": "failed", "details": "username already taken" }
-        elif len(sql_query("SELECT * FROM users WHERE email=%s;", (email,))):
-            retStatus = { "status": "failed", "details": "email already taken" }
-        else: 
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            try:
-                sql_query("INSERT INTO users VALUES (%s, %s, %s, %s);", (None, username, hashed_password, email))
-                retStatus = { "status": "success", "details": "user successfully signed up"}
-            except Exception:
-                retStatus = { "status": "failed", "details": "error reaching database" }
-        return retStatus  
+        signupStatus = { "status": "", "details": "" }
+        missingInput = 0
+        try: 
+            username = jsonData['username']
+        except KeyError:
+            signupStatus = { "status": "failed", "details": "missing username" }
+            missingInput = 1
+        try:
+            password = jsonData['password']
+        except KeyError:
+            signupStatus = { "status": "failed", "details": "missing password" }
+            missingInput = 1
+        try:
+            email = jsonData['email']
+        except KeyError:
+            signupStatus = { "status": "failed", "details": "missing email" }
+            missingInput = 1
+        if not missingInput:
+            if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
+                signupStatus = { "status": "failed", "details": "username already taken" }
+            elif len(sql_query("SELECT * FROM users WHERE email=%s;", (email,))):
+                signupStatus = { "status": "failed", "details": "email already taken" }
+            else: 
+                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+                try:
+                    sql_query("INSERT INTO users VALUES (%s, %s, %s, %s);", (None, username, hashed_password, email))
+                    signupStatus = { "status": "success", "details": "user successfully signed up" }
+                except Exception:
+                    signupStatus = { "status": "failed", "details": "error reaching database" }
+        return signupStatus  
 
 class Movie(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
@@ -117,6 +144,7 @@ class RateMovie(Resource):
             curUserId = current_user.id
         except Exception as e:
             curUserId = -1
+        # TODO: need logic if user not logged in 
         # return rate_movie(movieTitle, curUserId, userRating)
         return rate_movie(movieName, 1, userRating)
 
@@ -143,7 +171,7 @@ api.add_resource(Movie, "/movie/<movieName>")
 api.add_resource(SignUp, "/sign-up")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
-api.add_resource(GetUser, "/get_user")
+api.add_resource(GetUser, "/get-user")
 # TODO: need to decide how to setup url; /movie/<movieName>/rating or /rating/<movieName>; 
 #       former might be easier to implement with react useLocation() 
 api.add_resource(RateMovie, "/movie/<movieName>/rating") # TODO: change these to id in case there are movies with duplicate names

@@ -21,7 +21,8 @@ function LoginPage(){
 	
 			// Handle the response, e.g., check if login was successful
 			if (response.ok) {
-				console.log('Login successful');
+				const data = await response.json();
+				console.log(data);
 			} else {
 				console.error('Login failed');
 			}

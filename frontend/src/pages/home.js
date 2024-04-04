@@ -7,7 +7,8 @@ function Home() {
     return (
         <div className="App-header">
             <div idName="home-banner">
-                <h1>Hey!</h1>
+                <h1>Flick Finder</h1>
+                <h2>v2.0</h2>
             </div>
         </div>
     );

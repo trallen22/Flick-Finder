@@ -6,15 +6,21 @@ import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import MovieCardGroup from '../components/movie-display';
 
 function Profile() {
 
     const [curUser, setUser] = useState({
-        user_id: "-1"
+        username: "user not signed in", 
+        likes: { movie0: "no liked movies" }, 
+        dislikes: { movie0: "no disliked movies" }, 
+        favorites: { movie0: "no favorite movies" }
     });
+
+    const [curOpinion, setOpinion] = useState(curUser.favorites)
     
     useEffect(() => {
-        fetch("/get-user").then((res) => {
+        fetch("/profile").then((res) => {
             res.json().then((data) => {
                 setUser(data);
             })
@@ -24,6 +30,21 @@ function Profile() {
         });
     }, []);
 
+    async function showOpinion(opinion) {
+        console.log(opinion);
+        try {
+            if (opinion === "likes") {
+                setOpinion(curUser.likes);
+            } else if (opinion === "dislikes") {
+                setOpinion(curUser.dislikes);
+            } else {
+                setOpinion(curUser.favorites);
+            }
+        } catch (error) {
+            console.error('Error during changing opinion')
+        }
+    }
+
     return (
         <Container className="profile-container">
             <Row className="profile-header">
@@ -32,20 +53,28 @@ function Profile() {
                 </Col>
                 <Col className="col-12">
                     <h1 id="user-name">
-                        {curUser.user_id}
+                        {curUser.username}
                     </h1>
                 </Col>
             </Row>
             <Row>
                 <Col>
                     <ButtonGroup className="w-100">
-                        <Button variant="secondary">Favorites</Button>
-                        <Button variant="secondary">Likes</Button>
-                        <Button variant="secondary">Recent</Button>
+                        <Button variant="secondary" onClick={() => showOpinion("favorites")}>Favorites</Button>
+                        <Button variant="secondary" onClick={() => showOpinion("likes")}>Likes</Button>
+                        <Button variant="secondary" onClick={() => showOpinion("dislikes")}>Recent</Button>
                     </ButtonGroup>
                 </Col>
             </Row>
+            <Row>
+                <div className="recommend-wrapper">
+                    <Col>
+                        <MovieCardGroup movieData={curOpinion} />
+                    </Col>
+                </div>
+            </Row>
         </Container>
+        
     );
 }
 

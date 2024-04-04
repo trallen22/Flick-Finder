@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name
+from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies
 
 app = Flask(__name__)
 
@@ -81,6 +81,19 @@ class GetUser(Resource):
         except Exception as e:
             userStatus = { "user_id": "-1" }
         return userStatus
+
+class Profile(Resource): 
+    def get(self):
+        try:
+            curUserId = current_user.id 
+        except Exception as e:
+            curUserId = -1
+        profileStatus = dict()
+        profileStatus['username'] = sql_query("SELECT username FROM users WHERE user_id=%s;", (curUserId,))[0]['username']
+        profileStatus['likes'] = get_liked_movies(curUserId)
+        profileStatus['dislikes'] = get_disliked_movies(curUserId)
+        profileStatus['favorites'] = get_favorite_movies(curUserId)
+        return profileStatus
 
 class SignUp(Resource):
     def get(self):
@@ -172,6 +185,7 @@ api.add_resource(SignUp, "/sign-up")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
 api.add_resource(GetUser, "/get-user")
+api.add_resource(Profile, "/profile")
 # TODO: need to decide how to setup url; /movie/<movieName>/rating or /rating/<movieName>; 
 #       former might be easier to implement with react useLocation() 
 api.add_resource(RateMovie, "/movie/<movieName>/rating") # TODO: change these to id in case there are movies with duplicate names

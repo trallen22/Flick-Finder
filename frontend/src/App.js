@@ -15,6 +15,7 @@ import Profile from './pages/profile';
 import SignUp from './pages/signup';
 import LoginPage from './pages/login';
 import Logout from './pages/logout';
+import SearchMovies from './pages/search-movies.js';
 
 
 function App() {
@@ -55,6 +56,10 @@ function App() {
 					<Route
 						exact path="/user"
 						element={<Navigate to="/" />}
+					></Route>
+					<Route
+						path="/search-movies/*"
+						element={<SearchMovies />}
 					></Route>
 				</Routes>
 			</Router>

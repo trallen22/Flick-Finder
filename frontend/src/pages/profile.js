@@ -32,6 +32,7 @@ function Profile() {
 
     async function showOpinion(opinion) {
         console.log(opinion);
+        console.log(curOpinion);
         try {
             if (opinion === "likes") {
                 setOpinion(curUser.likes);

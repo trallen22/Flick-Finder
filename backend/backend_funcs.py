@@ -88,7 +88,7 @@ def search_movie_by_name(movieName:str) -> dict:
 # TODO: need to implement logic so that movies that have been rated aren't recommended 
 def top_recommendations(userId:int) -> dict:
 	# TODO: need to define behavior if user is not logged in 
-	NUM_REC_MOVIES = 5
+	NUM_REC_MOVIES = 10
 	movieDict = {}
 	userRecsDict = weight_associated_movies(userId)
 	userRecsIdList = list(userRecsDict.keys())[:NUM_REC_MOVIES]

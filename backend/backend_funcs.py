@@ -4,11 +4,11 @@ import sys
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-PASSWORD = '123456'
+# PASSWORD = '123456'
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
-		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD)
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) #, password=PASSWORD)
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()
@@ -142,7 +142,6 @@ def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
 			sql_query(rateStr, (userId, movieId, userOpinion))
 	else:
 		if userOpinion:
-			# TODO: need to add logic if user hasn't liked/disliked a movie; need to figure out what to return if not liked 
 			try:
 				opinionStatus['details'] = check[0]['is_liked']
 			except IndexError:
@@ -151,6 +150,28 @@ def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
 			deleteStr = "DELETE FROM likes WHERE movie_id=%s AND user_id=%s;"
 			sql_query(deleteStr, (movieId, userId))
 	return opinionStatus
+
+def get_disliked_movies(userId:int) -> dict:
+	return get_movies_for_opinion(userId, 2)
+
+def get_liked_movies(userId:int) -> dict:
+	return get_movies_for_opinion(userId, 3)
+
+def get_favorite_movies(userId:int) -> dict:
+	return get_movies_for_opinion(userId, 4)
+
+def get_movies_for_opinion(userId:int, opinion:int) -> dict:
+	movieDict = dict()
+	moviesOfInterest = sql_query("SELECT movie_id FROM likes WHERE user_id=%s AND is_liked=%s;", (userId, opinion))
+	movieIds = []
+	for curMovie in moviesOfInterest:
+		movieIds.append(curMovie['movie_id'])
+	movieTitleList = []
+	for curMovId in movieIds:
+		movieTitleList.append(get_movie_title_by_id(curMovId))
+	for i in range(len(movieTitleList)):
+		movieDict[f"movie{i}"] = get_movie_details_by_name(movieTitleList[i])
+	return movieDict
 
 def get_user_ratings(userId:int) -> dict:
 	"""

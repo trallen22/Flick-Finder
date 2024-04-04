@@ -51,16 +51,21 @@ class Login(Resource):
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
             # TODO: need to add exception handling here as well if user not found 
-            user_data = cursor.fetchall()[0]
+            foundUser = 1
+            try:
+                user_data = cursor.fetchall()[0]
+            except: 
+                loginStatus = { "status": "failed", "details": "username not found" }
+                foundUser = 0
             cursor.close()
-
-            hashed_password = user_data[2]
-            is_valid = bcrypt.check_password_hash(hashed_password, password) 
-            if (is_valid):
-                login_user(User(user_data[0], user_data[1]))
-                loginStatus = { "status": "success", "details": "user successfully logged in" }
-            else:
-                loginStatus = { "status": "failed", "details": "incorrect password" }
+            if foundUser:
+                hashed_password = user_data[2]
+                is_valid = bcrypt.check_password_hash(hashed_password, password) 
+                if (is_valid):
+                    login_user(User(user_data[0], user_data[1]))
+                    loginStatus = { "status": "success", "details": "user successfully logged in" }
+                else:
+                    loginStatus = { "status": "failed", "details": "incorrect password" }
         return loginStatus
 
 class Logout(Resource):

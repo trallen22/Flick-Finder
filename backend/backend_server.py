@@ -24,11 +24,12 @@ login_manager.login_view = "/sign-up"
 
 @login_manager.user_loader
 def load_user(user_id):
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE user_id=%s;", (user_id,))
-    user_data = cursor.fetchall()[0]
-    cursor.close()
-    return User(user_id, user_data[1])
+    user_data = sql_query("SELECT * FROM users WHERE user_id=%s;", (user_id,))[0]
+    # cursor = mysql.connection.cursor()
+    # cursor.execute("SELECT * FROM users WHERE user_id=%s;", (user_id,))
+    # user_data = cursor.fetchall()[0]
+    # cursor.close()
+    return User(user_id, user_data['username'])
 
 class Login(Resource):
     def get(self):
@@ -48,24 +49,17 @@ class Login(Resource):
             loginStatus = { "status": "failed", "details": "missing password" }
             missingInput = 1
         if not missingInput:
-            cursor = mysql.connection.cursor()
-            cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
-            # TODO: need to add exception handling here as well if user not found 
-            foundUser = 1
             try:
-                user_data = cursor.fetchall()[0]
-            except: 
-                loginStatus = { "status": "failed", "details": "username not found" }
-                foundUser = 0
-            cursor.close()
-            if foundUser:
-                hashed_password = user_data[2]
+                user_data = sql_query("SELECT * FROM users WHERE username=%s;", (username,))[0]
+                hashed_password = user_data['password']
                 is_valid = bcrypt.check_password_hash(hashed_password, password) 
                 if (is_valid):
-                    login_user(User(user_data[0], user_data[1]))
+                    login_user(User(user_data['user_id'], user_data['username']))
                     loginStatus = { "status": "success", "details": "user successfully logged in" }
                 else:
                     loginStatus = { "status": "failed", "details": "incorrect password" }
+            except IndexError:
+                loginStatus = { "status": "failed", "details": "username not found" }
         return loginStatus
 
 class Logout(Resource):
@@ -159,7 +153,7 @@ class RateMovie(Resource):
             curUserId = -1
         # TODO: need logic if user not logged in 
         # return rate_movie(movieTitle, curUserId, userRating)
-        return rate_movie(movieName, 1, userRating)
+        return rate_movie(movieName, curUserId, userRating)
 
 # TODO: need to implement like/dislike/favorite GET
 class UserOpinion(Resource): 
@@ -172,7 +166,7 @@ class UserOpinion(Resource):
             curUserId = -1
         # TODO: need logic if user not logged in 
         # return user_opinion_of_movie(movieTitle, curUserId, userOpinion) 
-        return user_opinion_of_movie(movieName, 1, userOpinion) 
+        return user_opinion_of_movie(movieName, curUserId, userOpinion) 
 
 class MovieSearch(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 

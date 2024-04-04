@@ -1,3 +1,4 @@
+import Button from 'react-bootstrap/Button';
 import "../App.css";
 
 function Logout() {
@@ -14,8 +15,8 @@ function Logout() {
         }
     };
     return (
-        <div className="App">
-            <button type="button" onClick={() => logoutUser()}>Logout</button>
+        <div className="recommend-wrapper">
+            <Button variant="primary" className="recommend-button" onClick={() => logoutUser()}>Logout</Button>
         </div>
     )
 }

@@ -12,7 +12,7 @@ const MovieCardGroup = ({ movieData }) => {
             {movieData[key].posterURL && <Card.Img variant="top" src={movieData[key].posterURL} />}
             <Card.Body>
               <Card.Title>{movieData[key].title}</Card.Title>
-              <Card.Text>{movieData[key].description}</Card.Text>
+              {/* <Card.Text>{movieData[key].description}</Card.Text> */}
             </Card.Body>
           </Card>
         </Link>

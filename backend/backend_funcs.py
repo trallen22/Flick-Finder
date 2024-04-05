@@ -69,7 +69,6 @@ def get_movie_details_by_id(movieId) -> dict:
 
 def search_movie_by_name(movieName:str) -> dict:
 	movieDict = {}
-	movieList = []
 	movieTitle = movieName.replace('_', ' ')
 	sqlStr = "SELECT * FROM movies WHERE title=%s;"
 	curMovies = sql_query(sqlStr, (movieTitle,))
@@ -155,13 +154,15 @@ def get_disliked_movies(userId:int) -> dict:
 	return get_movies_for_opinion(userId, 2)
 
 def get_liked_movies(userId:int) -> dict:
-	return get_movies_for_opinion(userId, 3)
+	curMovDict = get_favorite_movies(userId)
+	return get_movies_for_opinion(userId, 3, movieDict=curMovDict)
 
 def get_favorite_movies(userId:int) -> dict:
 	return get_movies_for_opinion(userId, 4)
 
-def get_movies_for_opinion(userId:int, opinion:int) -> dict:
-	movieDict = dict()
+def get_movies_for_opinion(userId:int, opinion:int, movieDict=None) -> dict:
+	if not movieDict:
+		movieDict = dict()
 	moviesOfInterest = sql_query("SELECT movie_id FROM likes WHERE user_id=%s AND is_liked=%s;", (userId, opinion))
 	movieIds = []
 	for curMovie in moviesOfInterest:
@@ -170,7 +171,7 @@ def get_movies_for_opinion(userId:int, opinion:int) -> dict:
 	for curMovId in movieIds:
 		movieTitleList.append(get_movie_title_by_id(curMovId))
 	for i in range(len(movieTitleList)):
-		movieDict[f"movie{i}"] = get_movie_details_by_name(movieTitleList[i])
+		movieDict[f"movie{i + len(list(movieDict.keys()))}"] = get_movie_details_by_name(movieTitleList[i])
 	return movieDict
 
 def get_user_ratings(userId:int) -> dict:
@@ -239,3 +240,7 @@ def weight_associated_movies(userId:int) -> dict:
 # print(user_opinion_of_movie("Batman Begins", CUR_USER, 3)) 
 # print(user_opinion_of_movie("Prometheus", CUR_USER, 4)) 
 # print(user_opinion_of_movie("The Dark Knight", CUR_USER, 1)) 
+
+# print(get_liked_movies(1))
+# print(get_favorite_movies(1))
+# print(get_disliked_movies(1))

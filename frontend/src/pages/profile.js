@@ -17,7 +17,7 @@ function Profile() {
         favorites: { movie0: "no favorite movies" }
     });
 
-    const [curOpinion, setOpinion] = useState(curUser.favorites)
+    const [curOpinion, setOpinion] = useState([])
     
     useEffect(() => {
         fetch("/profile").then((res) => {

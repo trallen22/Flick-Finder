@@ -79,6 +79,26 @@ def search_movie_by_name(movieName:str) -> dict:
 		i += 1
 	return movieDict
 
+def get_recent_movies(userId:int) -> dict:
+	interactedMovies = get_movies_interacted_with(userId)
+	recentMoviesDict = {}
+	recentMovTitleList = []
+	for movieId in interactedMovies:
+		recentMovTitleList.append(get_movie_title_by_id(movieId))
+	for i in range(len(recentMovTitleList)):
+		recentMoviesDict[f"movie{i}"] = get_movie_details_by_name(recentMovTitleList[i])
+	return recentMoviesDict
+
+def get_movies_interacted_with(userId:int) -> set:
+	interactedMovies = set(get_user_ratings(userId).keys())
+	likedMoviesDict = get_liked_movies(userId)
+	for i in range(len(likedMoviesDict)):
+		interactedMovies.add(likedMoviesDict[f"movie{i}"]['id'])
+	dislikedMoviesDict = get_disliked_movies(userId)
+	for i in range(len(dislikedMoviesDict)):
+		interactedMovies.add(dislikedMoviesDict[f"movie{i}"]['id'])
+	return interactedMovies
+
 # top_recommendations: returns a dictionary of the 
 # 	highest recommended movies
 #
@@ -96,7 +116,7 @@ def top_recommendations(userId:int) -> dict:
 		userRecsTitleList.append(get_movie_title_by_id(curMovId))
 	for i in range(len(userRecsTitleList)):
 		movieDict[f"movie{i}"] = get_movie_details_by_name(userRecsTitleList[i])
-	return movieDict
+	return movieDict 
 
 # puts the user rating and associated movie information into the reviews table
 # TODO: could look into implementing removing a rating for a movie
@@ -170,8 +190,9 @@ def get_movies_for_opinion(userId:int, opinion:int, movieDict=None) -> dict:
 	movieTitleList = []
 	for curMovId in movieIds:
 		movieTitleList.append(get_movie_title_by_id(curMovId))
+	keyBuffer = len(list(movieDict.keys()))
 	for i in range(len(movieTitleList)):
-		movieDict[f"movie{i + len(list(movieDict.keys()))}"] = get_movie_details_by_name(movieTitleList[i])
+		movieDict[f"movie{i + keyBuffer}"] = get_movie_details_by_name(movieTitleList[i])
 	return movieDict
 
 def get_user_ratings(userId:int) -> dict:
@@ -244,3 +265,5 @@ def weight_associated_movies(userId:int) -> dict:
 # print(get_liked_movies(1))
 # print(get_favorite_movies(1))
 # print(get_disliked_movies(1))
+
+print(get_movies_interacted_with(1))

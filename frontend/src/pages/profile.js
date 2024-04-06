@@ -14,7 +14,8 @@ function Profile() {
         username: "user not signed in", 
         likes: { movie0: "no liked movies" }, 
         dislikes: { movie0: "no disliked movies" }, 
-        favorites: { movie0: "no favorite movies" }
+        favorites: { movie0: "no favorite movies" }, 
+        recents: { movie0: "no recent movies"}
     });
 
     const [curOpinion, setOpinion] = useState([])
@@ -36,8 +37,8 @@ function Profile() {
         try {
             if (opinion === "likes") {
                 setOpinion(curUser.likes);
-            } else if (opinion === "dislikes") {
-                setOpinion(curUser.dislikes);
+            } else if (opinion === "recents") {
+                setOpinion(curUser.recents);
             } else {
                 setOpinion(curUser.favorites);
             }
@@ -63,7 +64,7 @@ function Profile() {
                     <ButtonGroup className="w-100">
                         <Button variant="secondary" onClick={() => showOpinion("favorites")}>Favorites</Button>
                         <Button variant="secondary" onClick={() => showOpinion("likes")}>Likes</Button>
-                        <Button variant="secondary" onClick={() => showOpinion("dislikes")}>Recent</Button>
+                        <Button variant="secondary" onClick={() => showOpinion("recents")}>Recent</Button>
                     </ButtonGroup>
                 </Col>
             </Row>

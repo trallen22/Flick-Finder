@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies
+from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies
 
 app = Flask(__name__)
 
@@ -87,6 +87,7 @@ class Profile(Resource):
         profileStatus['likes'] = get_liked_movies(curUserId)
         profileStatus['dislikes'] = get_disliked_movies(curUserId)
         profileStatus['favorites'] = get_favorite_movies(curUserId)
+        profileStatus['recents'] = get_recent_movies(curUserId)
         return profileStatus
 
 class SignUp(Resource):

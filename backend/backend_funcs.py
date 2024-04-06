@@ -31,7 +31,7 @@ def get_movie_title_by_id(movieId:int) -> str:
 	curMovTitle = sql_query("SELECT title FROM movies WHERE movie_id=%s;", (movieId,))[0]['title']
 	return curMovTitle
 
-# TODO: should user rating, liked/disliked be returned from this function? 
+# TODO: Should consolidate this into get_details_by_id
 def get_movie_details_by_name(movieName:str) -> dict:
 	movieDict = {}
 	movieTitle = movieName.replace('_', ' ')
@@ -104,13 +104,19 @@ def get_movies_interacted_with(userId:int) -> set:
 #
 # parameters: int, user id for the given user 
 # returns: dict, dictionary of movies 
-# TODO: need to implement logic so that movies that have been rated aren't recommended 
 def top_recommendations(userId:int) -> dict:
 	# TODO: need to define behavior if user is not logged in 
 	NUM_REC_MOVIES = 10
 	movieDict = {}
 	userRecsDict = weight_associated_movies(userId)
-	userRecsIdList = list(userRecsDict.keys())[:NUM_REC_MOVIES]
+	interactedMovies = get_movies_interacted_with(userId)
+	curMovIndex = 0
+	userRecsIdList = []
+	while len(userRecsIdList) < NUM_REC_MOVIES:
+		curMovId = list(userRecsDict.keys())[curMovIndex]
+		if curMovId not in interactedMovies:
+			userRecsIdList.append(curMovId)
+		curMovIndex += 1
 	userRecsTitleList = []
 	for curMovId in userRecsIdList:
 		userRecsTitleList.append(get_movie_title_by_id(curMovId))
@@ -211,6 +217,9 @@ def get_associated_movies() -> list:
 
 # TODO: need to look into how likes/dislikes/favorites will affect the recommendations 
 def weight_associated_movies(userId:int) -> dict:
+	"""
+	returns sorterd dictionary of movie_id by weight -> { movie_id: weight from recommender }
+	"""
 	WEIGHT_MULTIPLIER = 1
 	# TODO: could look into how changing these weights affects recommendations 
 	REC_WEIGHTS = {
@@ -266,4 +275,4 @@ def weight_associated_movies(userId:int) -> dict:
 # print(get_favorite_movies(1))
 # print(get_disliked_movies(1))
 
-print(get_movies_interacted_with(1))
+# print(get_movies_interacted_with(1))

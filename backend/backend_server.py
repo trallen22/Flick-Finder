@@ -25,10 +25,6 @@ login_manager.login_view = "/sign-up"
 @login_manager.user_loader
 def load_user(user_id):
     user_data = sql_query("SELECT * FROM users WHERE user_id=%s;", (user_id,))[0]
-    # cursor = mysql.connection.cursor()
-    # cursor.execute("SELECT * FROM users WHERE user_id=%s;", (user_id,))
-    # user_data = cursor.fetchall()[0]
-    # cursor.close()
     return User(user_id, user_data['username'])
 
 class Login(Resource):
@@ -152,8 +148,6 @@ class RateMovie(Resource):
             curUserId = current_user.id
         except Exception as e:
             curUserId = -1
-        # TODO: need logic if user not logged in 
-        # return rate_movie(movieTitle, curUserId, userRating)
         return rate_movie(movieName, curUserId, userRating)
 
 # TODO: need to implement like/dislike/favorite GET
@@ -165,8 +159,6 @@ class UserOpinion(Resource):
             curUserId = current_user.id
         except Exception as e:
             curUserId = -1
-        # TODO: need logic if user not logged in 
-        # return user_opinion_of_movie(movieTitle, curUserId, userOpinion) 
         return user_opinion_of_movie(movieName, curUserId, userOpinion) 
 
 class MovieSearch(Resource):

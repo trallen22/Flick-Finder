@@ -2,6 +2,24 @@
   text-align: center;
 }
 
+.Login{
+  margin-top: 15%;
+}
+
+.login-header{
+  background: white;
+  border-radius: 25px;
+}
+
+.sign-up{
+  margin-top: 15%;
+}
+
+.signup-header{
+  background: white;
+  border-radius: 25px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

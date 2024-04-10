@@ -10,10 +10,10 @@ const MovieCardGroup = ({ movieData }) => {
         <Link key={index} to={`/movie/${movieData[key].title}`} style={{ textDecoration: 'none' }}>
           <Card style={{ width: '16rem', marginBottom: '20px' }}>
             {movieData[key].posterURL && <Card.Img variant="top" src={movieData[key].posterURL} />}
-            <Card.Body>
+            {/* <Card.Body>
               <Card.Title>{movieData[key].title}</Card.Title>
               <Card.Text>{movieData[key].description}</Card.Text>
-            </Card.Body>
+            </Card.Body> */}
           </Card>
         </Link>
       ))}

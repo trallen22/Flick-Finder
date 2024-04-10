@@ -201,6 +201,19 @@ def get_movies_for_opinion(userId:int, opinion:int, movieDict=None) -> dict:
 		movieDict[f"movie{i + keyBuffer}"] = get_movie_details_by_name(movieTitleList[i])
 	return movieDict
 
+def get_sorted_ratings(userId:int) -> dict:
+	movieDict = dict()
+	userRatingDict = get_user_ratings(userId)
+	sortedRatingMovDict = dict(sorted(userRatingDict.items(), key=lambda x:x[1], reverse=True))
+	userRatedMovieIdList = list(sortedRatingMovDict.keys())
+	ratedTitleList = []
+	for curMovId in userRatedMovieIdList:
+		ratedTitleList.append(get_movie_title_by_id(curMovId))
+	for i in range(len(ratedTitleList)):
+		movieDict[f"movie{i}"] = get_movie_details_by_name(ratedTitleList[i])
+		movieDict[f"movie{i}"]['rating'] = list(sortedRatingMovDict.values())[i]
+	return movieDict
+
 def get_user_ratings(userId:int) -> dict:
 	"""
 	returns: dict, dictionary of { movie1_id: rating, movie2_id: rating, ... } 
@@ -276,3 +289,5 @@ def weight_associated_movies(userId:int) -> dict:
 # print(get_disliked_movies(1))
 
 # print(get_movies_interacted_with(1))
+# print(dict(sorted(get_user_ratings(1).items(), key=lambda x:x[1], reverse=True)))
+# print(get_sorted_ratings(1))

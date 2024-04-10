@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import MovieCardGroup from '../components/movie-display';
+import RatingsCardGroup from "../components/ratings-display";
 
 function Profile() {
 
@@ -15,10 +16,12 @@ function Profile() {
         likes: { movie0: "no liked movies" }, 
         dislikes: { movie0: "no disliked movies" }, 
         favorites: { movie0: "no favorite movies" }, 
-        recents: { movie0: "no recent movies"}
+        recents: { movie0: "no recent movies" },
+        ratings: { movie0: "no rated movies" }
     });
 
     const [curOpinion, setOpinion] = useState([])
+    const [movieDisplay, setDisplay] = useState(true)
     
     useEffect(() => {
         fetch("/profile").then((res) => {
@@ -31,14 +34,18 @@ function Profile() {
         });
     }, []);
 
-    async function showOpinion(opinion) {
-        console.log(opinion);
+    async function setActiveTab(activeTab) {
+        console.log(activeTab);
         console.log(curOpinion);
         try {
-            if (opinion === "likes") {
+            setDisplay(true);
+            if (activeTab === "likes") {
                 setOpinion(curUser.likes);
-            } else if (opinion === "recents") {
+            } else if (activeTab === "recents") {
                 setOpinion(curUser.recents);
+            } else if (activeTab === "ratings") {
+                setOpinion(curUser.ratings);
+                setDisplay(false);
             } else {
                 setOpinion(curUser.favorites);
             }
@@ -62,18 +69,24 @@ function Profile() {
             <Row>
                 <Col>
                     <ButtonGroup className="w-100">
-                        <Button variant="secondary" onClick={() => showOpinion("favorites")}>Favorites</Button>
-                        <Button variant="secondary" onClick={() => showOpinion("likes")}>Likes</Button>
-                        <Button variant="secondary" onClick={() => showOpinion("recents")}>Recent</Button>
+                        <Button variant="secondary" onClick={() => setActiveTab("favorites")}>Favorites</Button>
+                        <Button variant="secondary" onClick={() => setActiveTab("likes")}>Likes</Button>
+                        <Button variant="secondary" onClick={() => setActiveTab("recents")}>Recent</Button>
+                        <Button variant="secondary" onClick={() => setActiveTab("ratings")}>Ratings</Button>
                     </ButtonGroup>
                 </Col>
             </Row>
             <Row>
-                <div className="recommend-wrapper">
+                {movieDisplay && <div className="recommend-wrapper">
                     <Col>
                         <MovieCardGroup movieData={curOpinion} />
                     </Col>
-                </div>
+                </div>}
+                {!movieDisplay && <div className="recommend-wrapper">
+                    <Col>
+                        <RatingsCardGroup movieData={curOpinion} />
+                    </Col>
+                </div>}
             </Row>
         </Container>
         

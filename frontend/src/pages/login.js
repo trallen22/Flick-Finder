@@ -1,10 +1,12 @@
 import "../../src/App.css";
-
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import React, { useEffect, useState } from "react";
 
 function LoginPage(){
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [backendRes, setResponse] = useState({ status: "", details: "" });
 
 	const logInUser = async () => {
 		console.log(username, password);
@@ -18,14 +20,10 @@ function LoginPage(){
 					password: password
 				})
 			});
-	
-			// Handle the response, e.g., check if login was successful
-			if (response.ok) {
-				const data = await response.json();
-				console.log(data);
-			} else {
-				console.error('Login failed');
-			}
+			const data = await response.json();
+			setResponse(data);
+			console.log(data.status);
+
 		} catch (error) {
 			console.error('Error during login:', error);
 		}
@@ -37,32 +35,28 @@ function LoginPage(){
 	
 
 	return (
-
-		<div className="App">
-			<div className="App-header">
-				<h1>
-					Login
-				</h1>
-				<form>
-					<label>Username: </label>
-					<input
-						type="text"
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-					/>
-					<label>Password: </label>
-					<input
-						type="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-					<button type="button" onClick={() => logInUser()}>
-						Submit
-					</button>
-				</form>
-			</div>
+		<div className="form-container">
+			<Form className="login-form">
+				<Form.Label>{backendRes.status} {backendRes.details}</Form.Label>
+				<Form.Group controlId="formBasicEmail">
+					{/* <Form.Label>Username</Form.Label> */}
+					<Form.Control type="username" placeholder="Username" value={username}
+						onChange={(e) => setUsername(e.target.value)}/>
+					{/* <Form.Text className="text-muted">
+						We'll never share your email with anyone else.
+					</Form.Text> */}
+				</Form.Group>
+				<Form.Group controlId="formBasicPassword">
+					{/* <Form.Label>Password</Form.Label> */}
+					<Form.Control type="password" placeholder="Password" value={password}
+						onChange={(e) => setPassword(e.target.value)}/>
+				</Form.Group>
+				<Button variant="primary" onClick={logInUser}>
+					login
+				</Button>
+			</Form>
 		</div>
-	);
+  );
 };
 
 export default LoginPage;

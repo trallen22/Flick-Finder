@@ -55,25 +55,25 @@ function Movie() {
 		}
     }
 
-    async function handleDislike(){
+    async function handleFavorite(){
         console.log('disliked')
 		try { 
 			const response = await fetch(`/movie/${movieDetails.title}/opinion`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
-					opinion: 2
+					opinion: 4
 				})
 			});
 	
 			// Handle the response, e.g., check if login was successful
 			if (response.ok) {
-				console.log('disike successful');
+				console.log('fav successful');
 			} else {
-				console.error('disike failed');
+				console.error('fav failed');
 			}
 		} catch (error) {
-			console.error('Error during dislike:', error);
+			console.error('Error during fav:', error);
 		}
     }
 
@@ -133,7 +133,7 @@ function Movie() {
                     </Col>
                     <Col>
 
-                        <Button variant="primary" onClick={handleDislike} className="dislike-button"n>Dislike</Button>
+                        <Button variant="primary" onClick={handleFavorite} className="fav-button"n>Favorite</Button>
                     </Col>
                 </Row>
                 

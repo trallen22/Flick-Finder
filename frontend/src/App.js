@@ -12,7 +12,7 @@ import Movie from './pages/movie';
 import Home from './pages/home';
 import TopRecommendations from './pages/top-recommendations';
 import Profile from './pages/profile';
-import SignUp from './pages/signup';
+import SignUp from './pages/sign-up';
 import LoginPage from './pages/login';
 import Logout from './pages/logout';
 import SearchMovies from './pages/search-movies.js';

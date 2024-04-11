@@ -1,10 +1,14 @@
 import mysql.connector 
 import sys
+import smtplib
+from email.message import EmailMessage
 
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
 # PASSWORD = '123456'
+EMAILADDRESS = 'flick.finder.recommender@gmail.com'
+EMAILPASSWORD = 'ywvz lzum yfei pmah' # to login online -> Movie123
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
@@ -267,6 +271,29 @@ def weight_associated_movies(userId:int) -> dict:
 	sortedWeightMovDict = dict(sorted(weightedMovieDict.items(), key=lambda x:x[1], reverse=True))
 	return sortedWeightMovDict
 
+def send_recovery_email(userId:int) -> None:
+	msg = EmailMessage()
+	msg['Subject'] = "Password Reset"
+	msg['From'] = EMAILADDRESS
+	# msg['To'] = sql_query("SELECT email FROM users WHERE user_id=%s", (userId,))[0]['email']
+	msg['To'] = "trallen@davidson.edu"
+	
+	msg.set_content("This is a test email")
+	try:
+		with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+			# logging into smtp 
+			try:
+				smtp.login(EMAILADDRESS, EMAILPASSWORD)
+			except Exception as e:
+				print(f'{e}')
+			# sending email via smtp 
+			try:
+				smtp.send_message(msg)
+			except Exception as e:
+				print(f'{e}')
+	except Exception as e:
+		print(f'{e}')
+
 # ##############
 # Used for testing 
 # print("don't forget to comment the code below!!") 
@@ -291,3 +318,4 @@ def weight_associated_movies(userId:int) -> dict:
 # print(get_movies_interacted_with(1))
 # print(dict(sorted(get_user_ratings(1).items(), key=lambda x:x[1], reverse=True)))
 # print(get_sorted_ratings(1))
+send_recovery_email(1)

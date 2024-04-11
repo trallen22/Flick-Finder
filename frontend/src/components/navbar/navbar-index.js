@@ -50,13 +50,6 @@ const NavbarFF = () => {
                         <Col xs="auto">
                             <Button type="submit" href={`/search-movies/${val}`}>Search</Button>
                         </Col>
-                        <Col>
-                            <Nav className="me-auto">
-                                <Nav.Link href="/logout">Logout</Nav.Link>
-                                <Nav.Link href="/login">Login</Nav.Link>
-                                <Nav.Link href="/sign-up">Sign Up</Nav.Link>
-                            </Nav>
-                        </Col>
                     </Row>
                 </Form>
                 <Nav className="me-auto">

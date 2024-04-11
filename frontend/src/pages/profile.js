@@ -77,7 +77,7 @@ function Profile() {
         const movieKeys = Object.values(opinion);
         const movieDataPromises = movieKeys.map(movieTitle => fetchMovieData(movieTitle));
         const movieData = await Promise.all(movieDataPromises);
-        setOpinion(movieData);
+        setDetails(movieData);
     };
 
     return (

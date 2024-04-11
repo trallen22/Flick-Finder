@@ -1,22 +1,10 @@
 import "../../src/App.css";
-<<<<<<< HEAD
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import React, { useEffect, useState } from "react";
-
-function LoginPage(){
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [backendRes, setResponse] = useState({ status: "", details: "" });
-
-	const logInUser = async () => {
-=======
 import React, { useState } from "react";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
+// import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 
 function LoginPage() {
@@ -24,7 +12,6 @@ function LoginPage() {
     const [password, setLoginPassword] = useState("");
 
     const logInUser = async () => {
->>>>>>> main
 		console.log(username, password);
 	
 		try { 
@@ -37,7 +24,7 @@ function LoginPage() {
 				})
 			});
 			const data = await response.json();
-			setResponse(data);
+			// setResponse(data);
 			console.log(data.status);
 
 		} catch (error) {
@@ -45,31 +32,6 @@ function LoginPage() {
 		}
 	};
 
-<<<<<<< HEAD
-	return (
-		<div className="form-container">
-			<Form className="login-form">
-				<Form.Label>{backendRes.status} {backendRes.details}</Form.Label>
-				<Form.Group controlId="formBasicEmail">
-					{/* <Form.Label>Username</Form.Label> */}
-					<Form.Control type="username" placeholder="Username" value={username}
-						onChange={(e) => setUsername(e.target.value)}/>
-					{/* <Form.Text className="text-muted">
-						We'll never share your email with anyone else.
-					</Form.Text> */}
-				</Form.Group>
-				<Form.Group controlId="formBasicPassword">
-					{/* <Form.Label>Password</Form.Label> */}
-					<Form.Control type="password" placeholder="Password" value={password}
-						onChange={(e) => setPassword(e.target.value)}/>
-				</Form.Group>
-				<Button variant="primary" onClick={logInUser}>
-					login
-				</Button>
-			</Form>
-		</div>
-  );
-=======
     return (
         <Container className="Login">
             <Row className="justify-content-center">
@@ -98,7 +60,6 @@ function LoginPage() {
             </Row>
         </Container>
     );
->>>>>>> main
 };
 
 export default LoginPage;

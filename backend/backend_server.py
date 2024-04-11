@@ -5,13 +5,13 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies
+from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings
 
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '123456'
+# app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'FlickFinder'
 app.config['SECRET_KEY'] = 'secret1'
 
@@ -25,10 +25,6 @@ login_manager.login_view = "/sign-up"
 @login_manager.user_loader
 def load_user(user_id):
     user_data = sql_query("SELECT * FROM users WHERE user_id=%s;", (user_id,))[0]
-    # cursor = mysql.connection.cursor()
-    # cursor.execute("SELECT * FROM users WHERE user_id=%s;", (user_id,))
-    # user_data = cursor.fetchall()[0]
-    # cursor.close()
     return User(user_id, user_data['username'])
 
 class Login(Resource):
@@ -55,7 +51,7 @@ class Login(Resource):
                 is_valid = bcrypt.check_password_hash(hashed_password, password) 
                 if (is_valid):
                     login_user(User(user_data['user_id'], user_data['username']))
-                    loginStatus = { "status": "success", "details": "user successfully logged in" }
+                    loginStatus = { "status": "success", "details": "successfully logged in" }
                 else:
                     loginStatus = { "status": "failed", "details": "incorrect password" }
             except IndexError:
@@ -87,6 +83,8 @@ class Profile(Resource):
         profileStatus['likes'] = get_liked_movies(curUserId)
         profileStatus['dislikes'] = get_disliked_movies(curUserId)
         profileStatus['favorites'] = get_favorite_movies(curUserId)
+        profileStatus['recents'] = get_recent_movies(curUserId)
+        profileStatus['ratings'] = get_sorted_ratings(curUserId)
         return profileStatus
 
 class SignUp(Resource):
@@ -151,8 +149,6 @@ class RateMovie(Resource):
             curUserId = current_user.id
         except Exception as e:
             curUserId = -1
-        # TODO: need logic if user not logged in 
-        # return rate_movie(movieTitle, curUserId, userRating)
         return rate_movie(movieName, curUserId, userRating)
 
 # TODO: need to implement like/dislike/favorite GET
@@ -164,8 +160,6 @@ class UserOpinion(Resource):
             curUserId = current_user.id
         except Exception as e:
             curUserId = -1
-        # TODO: need logic if user not logged in 
-        # return user_opinion_of_movie(movieTitle, curUserId, userOpinion) 
         return user_opinion_of_movie(movieName, curUserId, userOpinion) 
 
 class MovieSearch(Resource):

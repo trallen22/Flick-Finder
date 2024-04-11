@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
+// import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 
 function LoginPage() {
@@ -23,14 +23,10 @@ function LoginPage() {
 					password: password
 				})
 			});
-	
-			// Handle the response, e.g., check if login was successful
-			if (response.ok) {
-				const data = await response.json();
-				console.log(data);
-			} else {
-				console.error('Login failed');
-			}
+			const data = await response.json();
+			// setResponse(data);
+			console.log(data.status);
+
 		} catch (error) {
 			console.error('Error during login:', error);
 		}

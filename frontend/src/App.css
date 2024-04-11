@@ -116,3 +116,19 @@
     transform: rotate(360deg);
   }
 }
+
+/* Define the active class for the active button */
+.btn-primary.active,
+.btn-primary:active,
+.btn-primary:focus {
+  background-color: #394551;
+  border-color: #29343f;
+}
+
+/* Define the active class for the non-active buttons */
+.btn-secondary.active,
+.btn-secondary:active,
+.btn-secondary:focus {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}

@@ -318,4 +318,4 @@ def send_recovery_email(userId:int) -> None:
 # print(get_movies_interacted_with(1))
 # print(dict(sorted(get_user_ratings(1).items(), key=lambda x:x[1], reverse=True)))
 # print(get_sorted_ratings(1))
-send_recovery_email(1)
+# send_recovery_email(1)

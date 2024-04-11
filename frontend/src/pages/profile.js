@@ -20,8 +20,9 @@ function Profile() {
         ratings: { movie0: "no rated movies" }
     });
 
-    const [curOpinion, setOpinion] = useState([])
+    const [curDetails, setDetails] = useState([])
     const [movieDisplay, setDisplay] = useState(true)
+    const [curTab, setTab] = useState("")
     
     useEffect(() => {
         fetch("/profile").then((res) => {
@@ -36,18 +37,19 @@ function Profile() {
 
     async function setActiveTab(activeTab) {
         console.log(activeTab);
-        console.log(curOpinion);
+        console.log(curDetails);
         try {
             setDisplay(true);
+            setTab(activeTab);
             if (activeTab === "likes") {
-                setOpinion(curUser.likes);
+                setDetails(curUser.likes);
             } else if (activeTab === "recents") {
-                setOpinion(curUser.recents);
+                setDetails(curUser.recents);
             } else if (activeTab === "ratings") {
-                setOpinion(curUser.ratings);
+                setDetails(curUser.ratings);
                 setDisplay(false);
             } else {
-                setOpinion(curUser.favorites);
+                setDetails(curUser.favorites);
             }
         } catch (error) {
             console.error('Error during changing opinion')
@@ -69,22 +71,34 @@ function Profile() {
             <Row>
                 <Col>
                     <ButtonGroup className="w-100">
-                        <Button variant="secondary" onClick={() => setActiveTab("favorites")}>Favorites</Button>
-                        <Button variant="secondary" onClick={() => setActiveTab("likes")}>Likes</Button>
-                        <Button variant="secondary" onClick={() => setActiveTab("recents")}>Recent</Button>
-                        <Button variant="secondary" onClick={() => setActiveTab("ratings")}>Ratings</Button>
+                    <Button
+                        variant={curTab === 'favorites' ? 'primary' : 'secondary'} 
+                        onClick={() => setActiveTab('favorites')}
+                    >Favorites</Button>
+                    <Button
+                        variant={curTab === 'likes' ? 'primary' : 'secondary'}
+                        onClick={() => setActiveTab('likes')}
+                    >Likes</Button>
+                    <Button
+                        variant={curTab === 'recents' ? 'primary' : 'secondary'}
+                        onClick={() => setActiveTab('recents')}
+                    >Recent</Button>
+                    <Button
+                        variant={curTab === 'ratings' ? 'primary' : 'secondary'}
+                        onClick={() => setActiveTab('ratings')}
+                    >Ratings</Button>
                     </ButtonGroup>
                 </Col>
             </Row>
             <Row>
                 {movieDisplay && <div className="recommend-wrapper">
-                    <Col>
-                        <MovieCardGroup movieData={curOpinion} />
-                    </Col>
+                <Col>
+                    <MovieCardGroup movieData={curDetails} />
+                </Col>
                 </div>}
                 {!movieDisplay && <div className="recommend-wrapper">
                     <Col>
-                        <RatingsCardGroup movieData={curOpinion} />
+                        <RatingsCardGroup movieData={curDetails} />
                     </Col>
                 </div>}
             </Row>

@@ -1,14 +1,18 @@
 import mysql.connector 
 import sys
+import smtplib
+from email.message import EmailMessage
 
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-PASSWORD = '123456'
+# PASSWORD = '123456'
+EMAILADDRESS = 'flick.finder.recommender@gmail.com'
+EMAILPASSWORD = 'ywvz lzum yfei pmah' # to login online -> Movie123
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
-		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE , password=PASSWORD)
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) # , password=PASSWORD)
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()
@@ -31,7 +35,7 @@ def get_movie_title_by_id(movieId:int) -> str:
 	curMovTitle = sql_query("SELECT title FROM movies WHERE movie_id=%s;", (movieId,))[0]['title']
 	return curMovTitle
 
-# TODO: should user rating, liked/disliked be returned from this function? 
+# TODO: Should consolidate this into get_details_by_id
 def get_movie_details_by_name(movieName:str) -> dict:
 	movieDict = {}
 	movieTitle = movieName.replace('_', ' ')
@@ -69,7 +73,6 @@ def get_movie_details_by_id(movieId) -> dict:
 
 def search_movie_by_name(movieName:str) -> dict:
 	movieDict = {}
-	movieList = []
 	movieTitle = movieName.replace('_', ' ')
 	sqlStr = "SELECT * FROM movies WHERE title=%s;"
 	curMovies = sql_query(sqlStr, (movieTitle,))
@@ -80,24 +83,50 @@ def search_movie_by_name(movieName:str) -> dict:
 		i += 1
 	return movieDict
 
+def get_recent_movies(userId:int) -> dict:
+	interactedMovies = get_movies_interacted_with(userId)
+	recentMoviesDict = {}
+	recentMovTitleList = []
+	for movieId in interactedMovies:
+		recentMovTitleList.append(get_movie_title_by_id(movieId))
+	for i in range(len(recentMovTitleList)):
+		recentMoviesDict[f"movie{i}"] = get_movie_details_by_name(recentMovTitleList[i])
+	return recentMoviesDict
+
+def get_movies_interacted_with(userId:int) -> set:
+	interactedMovies = set(get_user_ratings(userId).keys())
+	likedMoviesDict = get_liked_movies(userId)
+	for i in range(len(likedMoviesDict)):
+		interactedMovies.add(likedMoviesDict[f"movie{i}"]['id'])
+	dislikedMoviesDict = get_disliked_movies(userId)
+	for i in range(len(dislikedMoviesDict)):
+		interactedMovies.add(dislikedMoviesDict[f"movie{i}"]['id'])
+	return interactedMovies
+
 # top_recommendations: returns a dictionary of the 
 # 	highest recommended movies
 #
 # parameters: int, user id for the given user 
 # returns: dict, dictionary of movies 
-# TODO: need to implement logic so that movies that have been rated aren't recommended 
 def top_recommendations(userId:int) -> dict:
 	# TODO: need to define behavior if user is not logged in 
 	NUM_REC_MOVIES = 10
 	movieDict = {}
 	userRecsDict = weight_associated_movies(userId)
-	userRecsIdList = list(userRecsDict.keys())[:NUM_REC_MOVIES]
+	interactedMovies = get_movies_interacted_with(userId)
+	curMovIndex = 0
+	userRecsIdList = []
+	while len(userRecsIdList) < NUM_REC_MOVIES:
+		curMovId = list(userRecsDict.keys())[curMovIndex]
+		if curMovId not in interactedMovies:
+			userRecsIdList.append(curMovId)
+		curMovIndex += 1
 	userRecsTitleList = []
 	for curMovId in userRecsIdList:
 		userRecsTitleList.append(get_movie_title_by_id(curMovId))
 	for i in range(len(userRecsTitleList)):
 		movieDict[f"movie{i}"] = get_movie_details_by_name(userRecsTitleList[i])
-	return movieDict
+	return movieDict 
 
 # puts the user rating and associated movie information into the reviews table
 # TODO: could look into implementing removing a rating for a movie
@@ -155,13 +184,15 @@ def get_disliked_movies(userId:int) -> dict:
 	return get_movies_for_opinion(userId, 2)
 
 def get_liked_movies(userId:int) -> dict:
-	return get_movies_for_opinion(userId, 3)
+	curMovDict = get_favorite_movies(userId)
+	return get_movies_for_opinion(userId, 3, movieDict=curMovDict)
 
 def get_favorite_movies(userId:int) -> dict:
 	return get_movies_for_opinion(userId, 4)
 
-def get_movies_for_opinion(userId:int, opinion:int) -> dict:
-	movieDict = dict()
+def get_movies_for_opinion(userId:int, opinion:int, movieDict=None) -> dict:
+	if not movieDict:
+		movieDict = dict()
 	moviesOfInterest = sql_query("SELECT movie_id FROM likes WHERE user_id=%s AND is_liked=%s;", (userId, opinion))
 	movieIds = []
 	for curMovie in moviesOfInterest:
@@ -169,8 +200,22 @@ def get_movies_for_opinion(userId:int, opinion:int) -> dict:
 	movieTitleList = []
 	for curMovId in movieIds:
 		movieTitleList.append(get_movie_title_by_id(curMovId))
+	keyBuffer = len(list(movieDict.keys()))
 	for i in range(len(movieTitleList)):
-		movieDict[f"movie{i}"] = get_movie_details_by_name(movieTitleList[i])
+		movieDict[f"movie{i + keyBuffer}"] = get_movie_details_by_name(movieTitleList[i])
+	return movieDict
+
+def get_sorted_ratings(userId:int) -> dict:
+	movieDict = dict()
+	userRatingDict = get_user_ratings(userId)
+	sortedRatingMovDict = dict(sorted(userRatingDict.items(), key=lambda x:x[1], reverse=True))
+	userRatedMovieIdList = list(sortedRatingMovDict.keys())
+	ratedTitleList = []
+	for curMovId in userRatedMovieIdList:
+		ratedTitleList.append(get_movie_title_by_id(curMovId))
+	for i in range(len(ratedTitleList)):
+		movieDict[f"movie{i}"] = get_movie_details_by_name(ratedTitleList[i])
+		movieDict[f"movie{i}"]['rating'] = list(sortedRatingMovDict.values())[i]
 	return movieDict
 
 def get_user_ratings(userId:int) -> dict:
@@ -189,6 +234,9 @@ def get_associated_movies() -> list:
 
 # TODO: need to look into how likes/dislikes/favorites will affect the recommendations 
 def weight_associated_movies(userId:int) -> dict:
+	"""
+	returns sorterd dictionary of movie_id by weight -> { movie_id: weight from recommender }
+	"""
 	WEIGHT_MULTIPLIER = 1
 	# TODO: could look into how changing these weights affects recommendations 
 	REC_WEIGHTS = {
@@ -223,6 +271,35 @@ def weight_associated_movies(userId:int) -> dict:
 	sortedWeightMovDict = dict(sorted(weightedMovieDict.items(), key=lambda x:x[1], reverse=True))
 	return sortedWeightMovDict
 
+def send_recovery_email(userId:int) -> None:
+	msg = EmailMessage()
+	msg['Subject'] = "Password Reset"
+	msg['From'] = EMAILADDRESS
+	# msg['To'] = sql_query("SELECT email FROM users WHERE user_id=%s", (userId,))[0]['email']
+	msg['To'] = "trallen@davidson.edu"
+	
+	recoveryCode = get_recovery_code(userId)
+	msg.set_content(f"Your recovery code: {recoveryCode}")
+	try:
+		with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+			try:
+				smtp.login(EMAILADDRESS, EMAILPASSWORD)
+			except Exception as e:
+				print(f'{e}')
+			try:
+				smtp.send_message(msg)
+			except Exception as e:
+				print(f'{e}')
+	except Exception as e:
+		print(f'{e}')
+
+def get_recovery_code(userId:int) -> str:
+	code = sql_query("SELECT username FROM users WHERE user_id=%s", (userId,))[0]['username']
+	return code
+
+def reset_password(userId:int) -> None:
+	return 
+
 # ##############
 # Used for testing 
 # print("don't forget to comment the code below!!") 
@@ -239,3 +316,13 @@ def weight_associated_movies(userId:int) -> dict:
 # print(user_opinion_of_movie("Batman Begins", CUR_USER, 3)) 
 # print(user_opinion_of_movie("Prometheus", CUR_USER, 4)) 
 # print(user_opinion_of_movie("The Dark Knight", CUR_USER, 1)) 
+
+# print(get_liked_movies(1))
+# print(get_favorite_movies(1))
+# print(get_disliked_movies(1))
+
+# print(get_movies_interacted_with(1))
+# print(dict(sorted(get_user_ratings(1).items(), key=lambda x:x[1], reverse=True)))
+# print(get_sorted_ratings(1))
+# send_recovery_email(1)
+# print(get_recovery_code(1))

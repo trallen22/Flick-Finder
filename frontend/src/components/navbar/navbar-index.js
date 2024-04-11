@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
@@ -10,6 +10,22 @@ import "../../App.css";
 
 const NavbarFF = () => {
     const [val, setVal] = useState("");
+    const [loggedIn, setLoggedInStatus] = useState(false);
+
+    const checkUser = async () => {
+        const response = await fetch('/get-user');
+        const data = await response.json();
+        console.log(data)
+        if (data.user_id === '-1') {
+            setLoggedInStatus(false);
+        } else {
+            setLoggedInStatus(true);
+        }
+    }
+
+    useEffect(() => {
+        checkUser();
+    }, [loggedIn]);
 
     return (
         <Navbar bg="dark" data-bs-theme="dark" className="nav-bar-ff">
@@ -34,19 +50,13 @@ const NavbarFF = () => {
                         <Col xs="auto">
                             <Button type="submit" href={`/search-movies/${val}`}>Search</Button>
                         </Col>
-                        <Col>
-                            <Nav className="me-auto">
-                                <Nav.Link href="/logout">Logout</Nav.Link>
-                                <Nav.Link href="/login">Login</Nav.Link>
-                                <Nav.Link href="/sign-up">Sign Up</Nav.Link>
-                            </Nav>
-                        </Col>
                     </Row>
                 </Form>
-                {/* <Nav className="me-auto">
-                    <Nav.Link href="/logout">Logout</Nav.Link>
-                    <Nav.Link href="/login">Login</Nav.Link>
-                </Nav> */}
+                <Nav className="me-auto">
+                    {!loggedIn && <Nav.Link href="/login">Login</Nav.Link>}
+                    {loggedIn && <Nav.Link href="/logout">Logout</Nav.Link>}
+                    {!loggedIn && <Nav.Link href="/sign-up">Sign up</Nav.Link>}
+                </Nav>
             </Container>
         </Navbar>
     );

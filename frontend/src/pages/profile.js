@@ -7,6 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import MovieCardGroup from '../components/movie-display';
+import RatingsCardGroup from "../components/ratings-display";
 
 function Profile() {
 
@@ -14,10 +15,14 @@ function Profile() {
         username: "user not signed in", 
         likes: { movie0: "no liked movies" }, 
         dislikes: { movie0: "no disliked movies" }, 
-        favorites: { movie0: "no favorite movies" }
+        favorites: { movie0: "no favorite movies" }, 
+        recents: { movie0: "no recent movies" },
+        ratings: { movie0: "no rated movies" }
     });
 
-    const [curOpinion, setOpinion] = useState([])
+    const [curDetails, setDetails] = useState([])
+    const [movieDisplay, setDisplay] = useState(true)
+    const [curTab, setTab] = useState("")
     
     useEffect(() => {
         fetch("/profile").then((res) => {
@@ -30,16 +35,21 @@ function Profile() {
         });
     }, []);
 
-    async function showOpinion(opinion) {
-        console.log(opinion);
-        console.log(curOpinion);
+    async function setActiveTab(activeTab) {
+        console.log(activeTab);
+        console.log(curDetails);
         try {
-            if (opinion === "likes") {
-                setOpinion(curUser.likes);
-            } else if (opinion === "dislikes") {
-                setOpinion(curUser.dislikes);
+            setDisplay(true);
+            setTab(activeTab);
+            if (activeTab === "likes") {
+                setDetails(curUser.likes);
+            } else if (activeTab === "recents") {
+                setDetails(curUser.recents);
+            } else if (activeTab === "ratings") {
+                setDetails(curUser.ratings);
+                setDisplay(false);
             } else {
-                setOpinion(curUser.favorites);
+                setDetails(curUser.favorites);
             }
         } catch (error) {
             console.error('Error during changing opinion')
@@ -67,7 +77,7 @@ function Profile() {
         const movieKeys = Object.values(opinion);
         const movieDataPromises = movieKeys.map(movieTitle => fetchMovieData(movieTitle));
         const movieData = await Promise.all(movieDataPromises);
-        setOpinion(movieData);
+        setDetails(movieData);
     };
 
     return (
@@ -85,18 +95,36 @@ function Profile() {
             <Row>
                 <Col>
                     <ButtonGroup className="w-100">
-                        <Button variant="secondary" onClick={() => showOpinion("favorites")}>Favorites</Button>
-                        <Button variant="secondary" onClick={() => showOpinion("likes")}>Likes</Button>
-                        <Button variant="secondary" onClick={() => showOpinion("dislikes")}>Recent</Button>
+                    <Button
+                        variant={curTab === 'favorites' ? 'primary' : 'secondary'} 
+                        onClick={() => setActiveTab('favorites')}
+                    >Favorites</Button>
+                    <Button
+                        variant={curTab === 'likes' ? 'primary' : 'secondary'}
+                        onClick={() => setActiveTab('likes')}
+                    >Likes</Button>
+                    <Button
+                        variant={curTab === 'recents' ? 'primary' : 'secondary'}
+                        onClick={() => setActiveTab('recents')}
+                    >Recent</Button>
+                    <Button
+                        variant={curTab === 'ratings' ? 'primary' : 'secondary'}
+                        onClick={() => setActiveTab('ratings')}
+                    >Ratings</Button>
                     </ButtonGroup>
                 </Col>
             </Row>
             <Row>
-                <div className="recommend-wrapper">
+                {movieDisplay && <div className="recommend-wrapper">
+                <Col>
+                    <MovieCardGroup movieData={curDetails} />
+                </Col>
+                </div>}
+                {!movieDisplay && <div className="recommend-wrapper">
                     <Col>
-                        <MovieCardGroup movieData={curOpinion} />
+                        <RatingsCardGroup movieData={curDetails} />
                     </Col>
-                </div>
+                </div>}
             </Row>
         </Container>
     );

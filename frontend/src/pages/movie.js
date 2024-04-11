@@ -4,7 +4,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import React, { useEffect, useState } from "react";
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
+// import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { useLocation } from 'react-router-dom';
@@ -20,7 +20,7 @@ function Movie() {
         genre: "unable to get genreas"
     });
 
-    const [movie_rating, setRating] = useState(0);
+    // const [movie_rating, setRating] = useState(0);
 
     useEffect(() => {
         fetch(location.pathname).then((res) => {

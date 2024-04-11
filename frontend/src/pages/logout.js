@@ -15,8 +15,8 @@ function Logout() {
         }
     };
     return (
-        <div className="recommend-wrapper">
-            <Button variant="primary" className="recommend-button" onClick={() => logoutUser()}>Logout</Button>
+        <div className="form-container">
+            <Button variant="primary" type="submit" onClick={() => logoutUser()}>Logout</Button>
         </div>
     )
 }

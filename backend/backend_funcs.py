@@ -278,21 +278,27 @@ def send_recovery_email(userId:int) -> None:
 	# msg['To'] = sql_query("SELECT email FROM users WHERE user_id=%s", (userId,))[0]['email']
 	msg['To'] = "trallen@davidson.edu"
 	
-	msg.set_content("This is a test email")
+	recoveryCode = get_recovery_code(userId)
+	msg.set_content(f"Your recovery code: {recoveryCode}")
 	try:
 		with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-			# logging into smtp 
 			try:
 				smtp.login(EMAILADDRESS, EMAILPASSWORD)
 			except Exception as e:
 				print(f'{e}')
-			# sending email via smtp 
 			try:
 				smtp.send_message(msg)
 			except Exception as e:
 				print(f'{e}')
 	except Exception as e:
 		print(f'{e}')
+
+def get_recovery_code(userId:int) -> str:
+	code = sql_query("SELECT username FROM users WHERE user_id=%s", (userId,))[0]['username']
+	return code
+
+def reset_password(userId:int) -> None:
+	return 
 
 # ##############
 # Used for testing 
@@ -319,3 +325,4 @@ def send_recovery_email(userId:int) -> None:
 # print(dict(sorted(get_user_ratings(1).items(), key=lambda x:x[1], reverse=True)))
 # print(get_sorted_ratings(1))
 # send_recovery_email(1)
+# print(get_recovery_code(1))

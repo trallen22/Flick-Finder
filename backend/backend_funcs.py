@@ -293,11 +293,14 @@ def send_recovery_email(userId:int) -> None:
 	except Exception as e:
 		print(f'{e}')
 
-def get_recovery_code(userId:int) -> str:
-	code = sql_query("SELECT username FROM users WHERE user_id=%s", (userId,))[0]['username']
+def get_recovery_code(userEmail:str) -> str:
+	code = sql_query("SELECT username FROM users WHERE email=%s", (userEmail,))[0]['username']
 	return code
 
-def reset_password(userId:int) -> None:
+def reset_password(userEmail:int, inputRecoveryCode:str, newPassword:str) -> None:
+	userRecoveryCode = get_recovery_code(userEmail)
+	if (inputRecoveryCode == userRecoveryCode):
+		sql_query("UPDATE users SET password=%s WHERE email=%s",(newPassword, userEmail))
 	return 
 
 # ##############
@@ -326,3 +329,4 @@ def reset_password(userId:int) -> None:
 # print(get_sorted_ratings(1))
 # send_recovery_email(1)
 # print(get_recovery_code(1))
+# reset_password("test2@email.com", "ta2", "123")

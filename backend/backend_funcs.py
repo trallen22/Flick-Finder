@@ -6,13 +6,13 @@ from email.message import EmailMessage
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-# PASSWORD = '123456'
+PASSWORD = '123456'
 EMAILADDRESS = 'flick.finder.recommender@gmail.com'
 EMAILPASSWORD = 'ywvz lzum yfei pmah' # to login online -> Movie123
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
-		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) # , password=PASSWORD)
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE , password=PASSWORD)
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()

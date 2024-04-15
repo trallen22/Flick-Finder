@@ -214,7 +214,7 @@ def improved_recommendations(title):
 # TOOD: currently about 9700 movies in recommender 
 allMovies = sql_query("SELECT title FROM movies", ())
 movieIdDict = dict() # { movie title: movie id}
-pbar = tqdm(desc='GOING MOVIE BY MOVIE', total=46000) # TODO: figure out total number of movies 
+pbar = tqdm(desc='GOING MOVIE BY MOVIE', total=46000) #TODO: figure out total number of movies 
 for curMovie in allMovies:
 	try:
 		curMovId = movieIdDict[curMovie['title']]

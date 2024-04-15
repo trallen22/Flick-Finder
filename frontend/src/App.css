@@ -2,6 +2,25 @@
   text-align: center;
 }
 
+.Login{
+  margin-top: 15%;
+}
+
+.login-header{
+  background: white;
+  align-items: center;
+  border-radius: 25px;
+}
+
+.sign-up{
+  margin-top: 15%;
+}
+
+.signup-header{
+  background: white;
+  border-radius: 25px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -38,6 +57,55 @@
   width: 100px;
 }
 
+/* Styles for the container that holds the form */
+.form-container {
+  display: flex;
+  justify-content: center; /* Center items horizontally */
+  align-items: center; /* Center items vertically */
+  height: 100vh; /* Set container height to full viewport height */
+}
+
+.form-paragraph {
+  color: white;
+}
+
+/* Styles for the login form */
+.login-form {
+  max-width: 300px; /* Adjust the width according to your design */
+  margin: auto; /* Center the form horizontally */
+  align-content: center;
+}
+
+/* Styles for the form labels */
+.login-form label {
+  margin-bottom: 0.5rem; /* Adjust spacing between labels and inputs */
+  color: white;
+}
+
+/* Styles for the input fields */
+.login-form input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem; /* Adjust spacing between inputs */
+  border: 1px solid #ced4da; /* Add border to inputs */
+  border-radius: 4px; /* Round corners of inputs */
+}
+
+/* Styles for the login button */
+.login-form button[type="submit"] {
+  width: 50%;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff; /* Change button background color */
+  color: white; /* Change button text color */
+  cursor: pointer;
+}
+
+.login-form button[type="submit"]:hover {
+  background-color: #0056b3; /* Change button background color on hover */
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
@@ -66,4 +134,20 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Define the active class for the active button */
+.btn-primary.active,
+.btn-primary:active,
+.btn-primary:focus {
+  background-color: #394551;
+  border-color: #29343f;
+}
+
+/* Define the active class for the non-active buttons */
+.btn-secondary.active,
+.btn-secondary:active,
+.btn-secondary:focus {
+  background-color: #6c757d;
+  border-color: #6c757d;
 }

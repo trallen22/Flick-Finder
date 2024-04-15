@@ -5,13 +5,13 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie
+from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings
 
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = 'Steelers19!'
+# app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'FlickFinder'
 app.config['SECRET_KEY'] = 'secret1'
 
@@ -24,34 +24,38 @@ login_manager.login_view = "/sign-up"
 
 @login_manager.user_loader
 def load_user(user_id):
-    cursor = mysql.connection.cursor()
-    cursor.execute("SELECT * FROM users WHERE user_id=%s;", (user_id,))
-    user_data = cursor.fetchall()[0]
-    cursor.close()
-    return User(user_id, user_data[1])
+    user_data = sql_query("SELECT * FROM users WHERE user_id=%s;", (user_id,))[0]
+    return User(user_id, user_data['username'])
 
 class Login(Resource):
     def get(self):
         return
     def post(self):
         jsonData = request.get_json()
-        # TODO: need to add exception handling for KeyErrors 
-        username = jsonData['username']
-        password = jsonData['password']
-
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=%s;", (username,))
-        # TODO: need to add exception handling here as well if user not found 
-        user_data = cursor.fetchall()[0]
-        cursor.close()
-
-        hashed_password = user_data[2]
-        is_valid = bcrypt.check_password_hash(hashed_password, password) 
-        if (is_valid):
-            login_user(User(user_data[0], user_data[1]))
-            loginStatus = { "status": "success" }
-        else:
-            loginStatus = { "status": "failed" }
+        loginStatus = { "status": "", "details": "" }
+        missingInput = 0
+        try: 
+            username = jsonData['username']
+        except KeyError:
+            loginStatus = { "status": "failed", "details": "missing username" }
+            missingInput = 1
+        try:
+            password = jsonData['password']
+        except KeyError:
+            loginStatus = { "status": "failed", "details": "missing password" }
+            missingInput = 1
+        if not missingInput:
+            try:
+                user_data = sql_query("SELECT * FROM users WHERE username=%s;", (username,))[0]
+                hashed_password = user_data['password']
+                is_valid = bcrypt.check_password_hash(hashed_password, password) 
+                if (is_valid):
+                    login_user(User(user_data['user_id'], user_data['username']))
+                    loginStatus = { "status": "success", "details": "successfully logged in" }
+                else:
+                    loginStatus = { "status": "failed", "details": "incorrect password" }
+            except IndexError:
+                loginStatus = { "status": "failed", "details": "username not found" }
         return loginStatus
 
 class Logout(Resource):
@@ -68,6 +72,21 @@ class GetUser(Resource):
             userStatus = { "user_id": "-1" }
         return userStatus
 
+class Profile(Resource): 
+    def get(self):
+        try:
+            curUserId = current_user.id 
+        except Exception as e:
+            curUserId = -1
+        profileStatus = dict()
+        profileStatus['username'] = sql_query("SELECT username FROM users WHERE user_id=%s;", (curUserId,))[0]['username']
+        profileStatus['likes'] = get_liked_movies(curUserId)
+        profileStatus['dislikes'] = get_disliked_movies(curUserId)
+        profileStatus['favorites'] = get_favorite_movies(curUserId)
+        profileStatus['recents'] = get_recent_movies(curUserId)
+        profileStatus['ratings'] = get_sorted_ratings(curUserId)
+        return profileStatus
+
 class SignUp(Resource):
     def get(self):
         return jsonify({"movie0": { "title": "no title for movie 1", "description": "no description" }, 
@@ -75,23 +94,36 @@ class SignUp(Resource):
                 "movie2": { "title": "no title for movie 3", "description": "no description" }})
     def post(self):
         jsonData = request.get_json()
-        # TODO: need to add exception handling for KeyError
-        username = jsonData["username"]
-        email = jsonData["email"]
-        password = jsonData["password"]
-        retStatus = {}
-        if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
-            retStatus = { "status": "failed", "details": "username already taken" }
-        elif len(sql_query("SELECT * FROM users WHERE email=%s;", (email,))):
-            retStatus = { "status": "failed", "details": "email already taken" }
-        else: 
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            try:
-                sql_query("INSERT INTO users VALUES (%s, %s, %s, %s);", (None, username, hashed_password, email))
-                retStatus = { "status": "success", "details": "user successfully signed up"}
-            except Exception:
-                retStatus = { "status": "failed", "details": "error reaching database" }
-        return retStatus  
+        signupStatus = { "status": "", "details": "" }
+        missingInput = 0
+        try: 
+            username = jsonData['username']
+        except KeyError:
+            signupStatus = { "status": "failed", "details": "missing username" }
+            missingInput = 1
+        try:
+            password = jsonData['password']
+        except KeyError:
+            signupStatus = { "status": "failed", "details": "missing password" }
+            missingInput = 1
+        try:
+            email = jsonData['email']
+        except KeyError:
+            signupStatus = { "status": "failed", "details": "missing email" }
+            missingInput = 1
+        if not missingInput:
+            if len(sql_query("SELECT * FROM users WHERE username=%s", (username,))):
+                signupStatus = { "status": "failed", "details": "username already taken" }
+            elif len(sql_query("SELECT * FROM users WHERE email=%s;", (email,))):
+                signupStatus = { "status": "failed", "details": "email already taken" }
+            else: 
+                hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+                try:
+                    sql_query("INSERT INTO users VALUES (%s, %s, %s, %s);", (None, username, hashed_password, email))
+                    signupStatus = { "status": "success", "details": "user successfully signed up" }
+                except Exception:
+                    signupStatus = { "status": "failed", "details": "error reaching database" }
+        return signupStatus  
 
 class Movie(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
@@ -111,14 +143,13 @@ class TopRecommendations(Resource):
 # TODO: need to implement GET reqeust and clean up POST
 class RateMovie(Resource):
     def post(self, movieName):
-        jsonData = request.json()
+        jsonData = request.get_json()
         userRating = float(jsonData['rating'])
         try:
             curUserId = current_user.id
         except Exception as e:
             curUserId = -1
-        # return rate_movie(movieTitle, curUserId, userRating)
-        return rate_movie(movieName, 1, userRating)
+        return rate_movie(movieName, curUserId, userRating)
 
 # TODO: need to implement like/dislike/favorite GET
 class UserOpinion(Resource): 
@@ -129,9 +160,11 @@ class UserOpinion(Resource):
             curUserId = current_user.id
         except Exception as e:
             curUserId = -1
-        # TODO: need logic if user not logged in 
-        # return user_opinion_of_movie(movieTitle, curUserId, userOpinion) 
-        return user_opinion_of_movie(movieName, 1, userOpinion) 
+        return user_opinion_of_movie(movieName, curUserId, userOpinion) 
+
+class MovieSearch(Resource):
+    def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
+        return search_movie_by_name(movieName)
 
 
 api.add_resource(TopRecommendations, "/top-recommendations")
@@ -139,11 +172,13 @@ api.add_resource(Movie, "/movie/<movieName>")
 api.add_resource(SignUp, "/sign-up")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
-api.add_resource(GetUser, "/get_user")
+api.add_resource(GetUser, "/get-user")
+api.add_resource(Profile, "/profile")
 # TODO: need to decide how to setup url; /movie/<movieName>/rating or /rating/<movieName>; 
 #       former might be easier to implement with react useLocation() 
-api.add_resource(RateMovie, "/movie/<movieName>/rating")
-api.add_resource(UserOpinion, "/movie/<movieName>/opinion")
+api.add_resource(RateMovie, "/movie/<movieName>/rating") # TODO: change these to id in case there are movies with duplicate names
+api.add_resource(UserOpinion, "/movie/<movieName>/opinion") # TODO: same ^
+api.add_resource(MovieSearch, "/search-movies/<movieName>")
 
 if __name__ == "__main__":
     app.run(debug=True)

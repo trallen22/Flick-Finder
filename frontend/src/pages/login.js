@@ -1,12 +1,17 @@
 import "../../src/App.css";
+import React, { useState } from "react";
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+// import InputGroup from 'react-bootstrap/InputGroup';
+import Button from 'react-bootstrap/Button';
 
-import React, { useEffect, useState } from "react";
+function LoginPage() {
+    const [username, setLoginUsername] = useState("");
+    const [password, setLoginPassword] = useState("");
 
-function LoginPage(){
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-
-	const logInUser = async () => {
+    const logInUser = async () => {
 		console.log(username, password);
 	
 		try { 
@@ -18,50 +23,44 @@ function LoginPage(){
 					password: password
 				})
 			});
-	
-			// Handle the response, e.g., check if login was successful
-			if (response.ok) {
-				console.log('Login successful');
-			} else {
-				console.error('Login failed');
-			}
+			const data = await response.json();
+			// setResponse(data);
+			console.log(data.status);
+
 		} catch (error) {
 			console.error('Error during login:', error);
 		}
 	};
-	
-	useEffect(() => {
-		// You can perform other actions when the component mounts here
-	}, []);
-	
 
-	return (
-
-		<div className="App">
-			<div className="App-header">
-				<h1>
-					Login
-				</h1>
-				<form>
-					<label>Username: </label>
-					<input
-						type="text"
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-					/>
-					<label>Password: </label>
-					<input
-						type="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-					<button type="button" onClick={() => logInUser()}>
-						Submit
-					</button>
-				</form>
-			</div>
-		</div>
-	);
+    return (
+        <Container className="Login">
+            <Row className="justify-content-center">
+                <Col md={6} className="login-header">
+                    <h1 className="mt-3">Login</h1>
+                    <Form>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                            <Form.Label id="login-email"></Form.Label>
+                            <Form.Control type="text"
+                                          placeholder="Email Address"
+                                          value={username}
+                                          onChange={(e) => setLoginUsername(e.target.value)}/>
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlInput2">
+                            <Form.Label></Form.Label>
+                            <Form.Control type="password"
+                                          placeholder="Password"
+                                          value={password}
+                                          onChange={(e) => setLoginPassword(e.target.value)} />
+                        </Form.Group>
+                    </Form>
+                    <Button type="button" className="primary mb-3" onClick={logInUser}>
+                        Submit
+                    </Button>
+                </Col>
+            </Row>
+        </Container>
+    );
 };
 
 export default LoginPage;
+

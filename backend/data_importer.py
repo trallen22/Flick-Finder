@@ -18,7 +18,8 @@ USER = 'root'
 DATABASE = "FlickFinder"
 META_FILENAME = "movie-data-csv/movies_metadata.csv"
 KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
-PASSWORD = '123456'
+CREDITS_FILENAME = "movie-data-csv/credits.csv"
+# PASSWORD = '123456'
 
 
 # sqlInsert: executes a SQL insert statement on a given table
@@ -43,12 +44,7 @@ def sqlInsert(curCursor, table, curTuple):
 os.system(f'mysql FlickFinder < "{os.getcwd()}/flick_finder_schema.sql"')
 
 try: 
-<<<<<<< HEAD
-	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) 
-=======
-	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
-	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
->>>>>>> main
+	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) #, password=PASSWORD) 
 except Exception as e:
 	print(f'error: {e}')
 	sys.exit()

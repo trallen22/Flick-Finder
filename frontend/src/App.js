@@ -1,7 +1,7 @@
 // import logo from './logo.svg';
 import './App.css';
 import Navbar from './components/navbar/navbar-index';
-import ReactDOM from "react-dom/client";
+// import ReactDOM from "react-dom/client";
 import {
     BrowserRouter as Router,
     Routes,
@@ -12,9 +12,10 @@ import Movie from './pages/movie';
 import Home from './pages/home';
 import TopRecommendations from './pages/top-recommendations';
 import Profile from './pages/profile';
-import SignUp from './pages/signup';
+import SignUp from './pages/sign-up';
 import LoginPage from './pages/login';
 import Logout from './pages/logout';
+import SearchMovies from './pages/search-movies.js';
 
 
 function App() {
@@ -55,6 +56,10 @@ function App() {
 					<Route
 						exact path="/user"
 						element={<Navigate to="/" />}
+					></Route>
+					<Route
+						path="/search-movies/*"
+						element={<SearchMovies />}
 					></Route>
 				</Routes>
 			</Router>

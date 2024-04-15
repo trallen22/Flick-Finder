@@ -1,9 +1,13 @@
 import "../../src/App.css";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import React, { useEffect, useState } from "react";
 
 function SignUp(){
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+	const [email, setEmail] = useState("");
+	const [backendRes, setResponse] = useState({ status: "", details: "" })
 
 	const signUpUser = async () => {
 		console.log(username, password);
@@ -14,16 +18,14 @@ function SignUp(){
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					username: username,
-					password: password
+					password: password,
+					email: email
 				})
 			});
-	
-			// Handle the response, e.g., check if login was successful
-			if (response.ok) {
-				console.log('Sign up successful');
-			} else {
-				console.error('Sign up failed');
-			}
+			const data = await response.json();
+			console.log(data);
+			setResponse(data);
+
 		} catch (error) {
 			console.error('Error during sign up:', error);
 		}
@@ -36,29 +38,30 @@ function SignUp(){
 
 	return (
 
-		<div className="App">
-            <div className="App-header">
-                <h1>
-                    Sign Up
-                </h1>
-                <form>
-                    <label>Username: </label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    <label>Password: </label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button type="button" onClick={() => signUpUser()}>
-                    Submit
-                    </button>
-                </form>
-            </div>
+		<div className="form-container">
+			<Form className="login-form">
+				<Form.Label>{backendRes.details}</Form.Label>
+				<Form.Group controlId="formBasicEmail">
+					{/* <Form.Label>Username</Form.Label> */}
+					<Form.Control type="username" placeholder="Username" value={username}
+						onChange={(e) => setUsername(e.target.value)}/>
+					{/* <Form.Text className="text-muted">
+						We'll never share your email with anyone else.
+					</Form.Text> */}
+				</Form.Group>
+				<Form.Group controlId="signUpEmail">
+					<Form.Control type="email" placeholder="Email" value={email}
+						onChange={(e) => setEmail(e.target.value)}/>
+				</Form.Group>
+				<Form.Group controlId="formBasicPassword">
+					{/* <Form.Label>Password</Form.Label> */}
+					<Form.Control type="password" placeholder="Password" value={password}
+						onChange={(e) => setPassword(e.target.value)}/>
+				</Form.Group>
+				<Button variant="primary" onClick={signUpUser}>
+					Sign up
+				</Button>
+			</Form>
 		</div>
 	);
 };

@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings
+from backend_funcs import search_by_genre, top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings
 
 app = Flask(__name__)
 
@@ -165,6 +165,10 @@ class UserOpinion(Resource):
 class MovieSearch(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
         return search_movie_by_name(movieName)
+    
+class BrowseGenre(Resource):
+    def get(self, genre:str): # TODO: need to look into how spaces in titles are being represented in fetch 
+        return search_by_genre(genre)
 
 
 api.add_resource(TopRecommendations, "/top-recommendations")
@@ -179,6 +183,7 @@ api.add_resource(Profile, "/profile")
 api.add_resource(RateMovie, "/movie/<movieName>/rating") # TODO: change these to id in case there are movies with duplicate names
 api.add_resource(UserOpinion, "/movie/<movieName>/opinion") # TODO: same ^
 api.add_resource(MovieSearch, "/search-movies/<movieName>")
+api.add_resource(BrowseGenre, "/browse-genre/<genre>")
 
 if __name__ == "__main__":
     app.run(debug=True)

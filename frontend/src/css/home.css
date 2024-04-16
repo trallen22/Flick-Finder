@@ -4,17 +4,14 @@
   margin-bottom: 30px;
 }
 
-.content {
-  display: flex;
-}
-
-.popular-movies {
-  /* flex: 1; */
-  margin-right: 20px; /* Adjust as needed */
+.movie-content{
+  justify-content: left;
   color: white;
 }
 
-.main-content {
-  /* flex: 2; This will make the main content section take up the remaining space */
-}
+/* home.css */
 
+.popular-movies {
+  color: white; /* Set text color to white */
+  text-align: center; /* Align text to the left */
+}

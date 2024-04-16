@@ -74,11 +74,25 @@ def get_movie_details_by_id(movieId) -> dict:
 def search_movie_by_name(movieName:str) -> dict:
 	movieDict = {}
 	movieTitle = movieName.replace('_', ' ')
-	sqlStr = "SELECT * FROM movies WHERE title=%s;"
-	curMovies = sql_query(sqlStr, (movieTitle,))
+	# sqlStr = "SELECT * FROM movies WHERE title LIKE %s;"
+	# curMovies = sql_query(sqlStr, (movieTitle,))
+	# movieTitle = movieName.replace('_', ' ')
+	sqlStr = "SELECT * FROM movies WHERE title LIKE %s ORDER BY popularity DESC LIMIT 10;"
+	curMovies = sql_query(sqlStr, ('%' + movieTitle + '%',))
 	i = 0
 	for curMovie in curMovies:
-		print(curMovie["movie_id"])
+		movieDict[f"movie{i}"] = get_movie_details_by_id(curMovie["movie_id"])
+		i += 1
+	return movieDict
+
+def search_by_genre(genre:str) -> dict:
+	movieDict = {}
+	newGenre = genre.replace('_', ' ')
+
+	sqlStr = "SELECT * FROM movies WHERE genres LIKE %s ORDER BY popularity DESC LIMIT 5;"
+	curMovies = sql_query(sqlStr, ('%' + newGenre + '%',))
+	i = 0
+	for curMovie in curMovies:
 		movieDict[f"movie{i}"] = get_movie_details_by_id(curMovie["movie_id"])
 		i += 1
 	return movieDict

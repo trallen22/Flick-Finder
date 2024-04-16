@@ -52,7 +52,6 @@ function TopRecommendations() {
       <Button variant="primary" onClick={fetchRecommendations} className="recommend-button">Recommend</Button>
       {Object.keys(movieData).length > 0 && (
         <Container>
-          {console.log('hi')}
           <MovieCardGroup movieData={movieData}/>
         </Container>
       )}

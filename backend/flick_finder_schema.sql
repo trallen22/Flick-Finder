@@ -13,6 +13,7 @@ create table movies (
  	keywords	VARCHAR(1950), -- longest is 1901
 	runtime   INT,
 	release_date DATE,
+	popularity FLOAT,
 	primary key (movie_id)
 	);
 	

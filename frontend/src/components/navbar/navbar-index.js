@@ -23,6 +23,21 @@ const NavbarFF = () => {
         }
     }
 
+    const logoutUser = async () => {
+        try {
+            const response = await fetch('/logout');
+            console.log(response)
+            if (response.ok) {
+                console.log('Logout successful');
+                window.location.reload();
+            } else {
+                console.log('Logout failed');
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    };
+
     useEffect(() => {
         checkUser();
     }, [loggedIn]);
@@ -50,13 +65,15 @@ const NavbarFF = () => {
                         <Col xs="auto">
                             <Button type="submit" href={`/search-movies/${val}`}>Search</Button>
                         </Col>
+                        <Col xs="auto">
+                            <Nav className="login-buttons me-auto">
+                                {!loggedIn && <Nav.Link href="/login">Login</Nav.Link>}
+                                {loggedIn && <Nav.Link onClick={logoutUser}>Logout</Nav.Link>}
+                                {!loggedIn && <Nav.Link href="/sign-up">Sign up</Nav.Link>}
+                            </Nav>
+                        </Col>
                     </Row>
                 </Form>
-                <Nav className="me-auto">
-                    {!loggedIn && <Nav.Link href="/login">Login</Nav.Link>}
-                    {loggedIn && <Nav.Link href="/logout">Logout</Nav.Link>}
-                    {!loggedIn && <Nav.Link href="/sign-up">Sign up</Nav.Link>}
-                </Nav>
             </Container>
         </Navbar>
     );

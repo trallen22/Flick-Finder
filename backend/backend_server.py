@@ -62,7 +62,7 @@ class Logout(Resource):
     # @login_required
     def get(self):
         logout_user()
-        return redirect('/home')
+        return
 
 class GetUser(Resource):
     def get(self):

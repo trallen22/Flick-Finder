@@ -1,6 +1,7 @@
 import mysql.connector 
 import sys
 import smtplib
+import random
 from email.message import EmailMessage
 
 HOST = 'localhost'
@@ -86,16 +87,22 @@ def search_movie_by_name(movieName:str) -> dict:
 	return movieDict
 
 def search_by_genre(genre:str) -> dict:
-	movieDict = {}
-	newGenre = genre.replace('_', ' ')
+    movieDict = {}
+    newGenre = genre.replace('_', ' ')
+    
+    sqlStr = "SELECT * FROM movies WHERE genres LIKE %s ORDER BY popularity DESC LIMIT 20;"
+    curMovies = sql_query(sqlStr, ('%' + newGenre + '%',))
+    
+    i = 0
+    for curMovie in curMovies:
+        movieDict[f"movie{i}"] = get_movie_details_by_id(curMovie["movie_id"])
+        i += 1
 
-	sqlStr = "SELECT * FROM movies WHERE genres LIKE %s ORDER BY popularity DESC LIMIT 5;"
-	curMovies = sql_query(sqlStr, ('%' + newGenre + '%',))
-	i = 0
-	for curMovie in curMovies:
-		movieDict[f"movie{i}"] = get_movie_details_by_id(curMovie["movie_id"])
-		i += 1
-	return movieDict
+    # Extract 5 random movies from movieDict
+    random_movies = dict(random.sample(movieDict.items(), 5))
+    
+    return random_movies
+
 
 def get_recent_movies(userId:int) -> dict:
 	interactedMovies = get_movies_interacted_with(userId)

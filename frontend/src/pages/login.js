@@ -6,6 +6,8 @@ import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 // import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
 
 function LoginPage() {
     const [username, setLoginUsername] = useState("");
@@ -25,8 +27,8 @@ function LoginPage() {
 			});
 			const data = await response.json();
 			// setResponse(data);
-			console.log(data.status);
-
+			console.log('login status: ', data.status);
+			console.log('login details: ', data.details);
 		} catch (error) {
 			console.error('Error during login:', error);
 		}
@@ -53,9 +55,21 @@ function LoginPage() {
                                           onChange={(e) => setLoginPassword(e.target.value)} />
                         </Form.Group>
                     </Form>
-                    <Button type="button" className="primary mb-3" onClick={logInUser}>
-                        Submit
-                    </Button>
+					<div className="d-flex justify-content-between align-items-center">
+						<Col xs={4}>
+							<Nav className="me-auto">
+								<Nav.Link href="/forgot-password">Forgot Password?</Nav.Link>
+							</Nav>
+						</Col>
+						<Col xs={4} className="text-center">
+							<Button type="button" className="primary mb-3" onClick={logInUser}>
+								Submit
+							</Button>
+						</Col>
+						<Col>
+							{/* {empty for spacing} */}
+						</Col>
+					</div>
                 </Col>
             </Row>
         </Container>

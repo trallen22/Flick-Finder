@@ -88,6 +88,7 @@ class Profile(Resource):
         return profileStatus
 
 class SignUp(Resource):
+    # TODO: I think we can get rid of this GET request 
     def get(self):
         return jsonify({"movie0": { "title": "no title for movie 1", "description": "no description" }, 
                 "movie1": { "title": "no title for movie 2", "description": "no description" }, 
@@ -166,12 +167,17 @@ class MovieSearch(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
         return search_movie_by_name(movieName)
 
+class SendRecoveryEmail(Resource):
+    def post(self):
+        jsonData = request.get_json()
+        userEmail = jsonData['email']
+        send_recovery_email(userEmail)
+
 class ResetPassword(Resource):
     def post(self):
         resetStatus = { "status": "success", "details": "successfully reset password" }
         jsonData = request.get_json()
         userEmail = jsonData['email']
-        send_recovery_email(userEmail)
         recoveryCode = jsonData['recovery_code']
         newPassword = jsonData['new_password']
         hashedPassword = bcrypt.generate_password_hash(newPassword).decode('utf-8')
@@ -185,12 +191,11 @@ api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
 api.add_resource(GetUser, "/get-user")
 api.add_resource(Profile, "/profile")
-# TODO: need to decide how to setup url; /movie/<movieName>/rating or /rating/<movieName>; 
-#       former might be easier to implement with react useLocation() 
 api.add_resource(RateMovie, "/movie/<movieName>/rating") # TODO: change these to id in case there are movies with duplicate names
 api.add_resource(UserOpinion, "/movie/<movieName>/opinion") # TODO: same ^
 api.add_resource(MovieSearch, "/search-movies/<movieName>")
 api.add_resource(ResetPassword, "/reset-password")
+api.add_resource(SendRecoveryEmail, "/send-recovery")
 
 if __name__ == "__main__":
     app.run(debug=True)

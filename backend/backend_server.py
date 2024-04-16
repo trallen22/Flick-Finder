@@ -172,6 +172,7 @@ class SendRecoveryEmail(Resource):
         jsonData = request.get_json()
         userEmail = jsonData['email']
         send_recovery_email(userEmail)
+        return { "status": "success", "details": "recovery code has been sent by email" }
 
 class ResetPassword(Resource):
     def post(self):

@@ -6,7 +6,6 @@ import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 // import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
-import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 
 function LoginPage() {
@@ -41,14 +40,12 @@ function LoginPage() {
                     <h1 className="mt-3">Login</h1>
                     <Form>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                            <Form.Label id="login-email"></Form.Label>
                             <Form.Control type="text"
                                           placeholder="Email Address"
                                           value={username}
                                           onChange={(e) => setLoginUsername(e.target.value)}/>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput2">
-                            <Form.Label></Form.Label>
                             <Form.Control type="password"
                                           placeholder="Password"
                                           value={password}

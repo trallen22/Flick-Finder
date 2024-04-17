@@ -4,7 +4,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
-// import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 
 function ForgotPassword() {
@@ -64,6 +63,11 @@ function ForgotPassword() {
                                     <Button type="button" onClick={() => sendRecoveryEmail(recoveryEmail)}>Send Recovery Email</Button>
                                 </Col>
                             </Row>
+                            <Row>
+                                <Col>
+                                    <p onClick={() => setCurPage(true)}>I already have a reset code</p>
+                                </Col>
+                            </Row>
                         </Form>
                     </div>}
                     {onResetPage && <div>
@@ -87,10 +91,16 @@ function ForgotPassword() {
                             </Form.Group>
                         </Form>
                         <div className="d-flex justify-content-between align-items-center">
-                            <Col xs={12} className="text-center">
-                                <Button type="button" className="primary mb-3" onClick={() => resetPassword()}>
+                            <Col xs={4}>
+                                <p onClick={() => setCurPage(false)}>back to recovery email</p>
+                            </Col>
+                            <Col xs={4} className="text-center">
+                                <Button type="button" className="primary mb-3" onClick={resetPassword}>
                                     Submit
                                 </Button>
+                            </Col>
+                            <Col>
+                                {/* {empty for spacing} */}
                             </Col>
                         </div>
                     </div>}

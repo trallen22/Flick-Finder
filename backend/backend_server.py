@@ -5,13 +5,13 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings, reset_password, send_recovery_email
+from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings, reset_password, send_recovery_email, search_by_genre
 
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '123456'
+app.config['MYSQL_PASSWORD'] = 'Steelers19!'
 app.config['MYSQL_DB'] = 'FlickFinder'
 app.config['SECRET_KEY'] = 'secret1'
 
@@ -188,7 +188,14 @@ class ResetPassword(Resource):
         hashedPassword = bcrypt.generate_password_hash(newPassword).decode('utf-8')
         reset_password(userEmail, recoveryCode, hashedPassword)
         return resetStatus
-
+      
+class ChangePassword(Resource):
+    def post(self):
+        jsonData = request.get_json()
+        newPassword = jsonData["newPassword"]
+        reset_password(newPassword, current_user.id)
+        return {}
+      
 api.add_resource(TopRecommendations, "/top-recommendations")
 api.add_resource(Movie, "/movie/<movieName>")
 api.add_resource(SignUp, "/sign-up")
@@ -202,6 +209,7 @@ api.add_resource(MovieSearch, "/search-movies/<movieName>")
 api.add_resource(ResetPassword, "/reset-password")
 api.add_resource(SendRecoveryEmail, "/send-recovery")
 api.add_resource(BrowseGenre, "/browse-genre/<genre>")
+api.add_resource(ChangePassword, "/changepassword")
 
 if __name__ == "__main__":
     app.run(debug=True)

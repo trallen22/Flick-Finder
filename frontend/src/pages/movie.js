@@ -1,4 +1,4 @@
-import "../../src/movie.css";
+import "../App.css";
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -105,40 +105,41 @@ function Movie() {
 
     return (
         <Container className="Movie">
-            <div className="App-header">
+        <Row>
+            <Col md={{ span: 6, offset: 3 }}>
+            <div className="movie-header">
+                <h1>{movieDetails.title}</h1>
+                <p>{movieDetails.description}</p>
+                <p>{movieDetails.genre}</p>
+                <div className="buttons-container">
                 <Row>
-                    <Col>
-                        <h1>{movieDetails.title}</h1>
-                        <p>{movieDetails.description}</p>
-                        <p>{movieDetails.genre}</p>
+                    <Col xs={2}>
+                        <DropdownButton id="dropdown-basic-button" title="Rate">
+                        <Dropdown.Item onClick={() => { handleRating(5);}}>5</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { handleRating(4.5);}}>4.5</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { handleRating(4);}}>4</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { handleRating(3.5);}}>3.5</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { handleRating(3);}}>3</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { handleRating(2.5);}}>2.5</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { handleRating(2);}}>2</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { handleRating(1.5);}}>1.5</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { handleRating(1);}}>1</Dropdown.Item>
+                        <Dropdown.Item onClick={() => { handleRating(0.5);}}>0.5</Dropdown.Item>
+                        </DropdownButton>
+                    </Col>
+                    <Col xs={1}>
+                        <Button variant="primary" onClick={handleLike} className="like-button">&hearts;</Button>
+                    </Col>
+                    <Col xs={1}>
+                        <Button variant="primary" onClick={handleFavorite} className="fav-button">&#9733;</Button>
                     </Col>
                 </Row>
-                <Row>
-                    <Col>
-                            <DropdownButton id="dropdown-basic-button" title="Rate">
-                                <Dropdown.Item onClick={() => { handleRating(5);}}>5</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { handleRating(4.5);}}>4.5</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { handleRating(4);}}>4</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { handleRating(3.5);}}>3.5</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { handleRating(3);}}>3</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { handleRating(2.5);}}>2.5</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { handleRating(2);}}>2</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { handleRating(1.5);}}>1.5</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { handleRating(1);}}>1</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { handleRating(0.5);}}>0.5</Dropdown.Item>
-                            </DropdownButton>
-                    </Col>
-                    <Col>
-                        <Button variant="primary" onClick={handleLike} className="like-button">Like</Button>
-                    </Col>
-                    <Col>
-
-                        <Button variant="primary" onClick={handleFavorite} className="fav-button"n>Favorite</Button>
-                    </Col>
-                </Row>
-                
+                </div>
             </div>
+            </Col>
+        </Row>
         </Container>
+
     );
 }
  

@@ -1,5 +1,5 @@
 import "../css/home.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -7,7 +7,12 @@ import Col from 'react-bootstrap/Col';
 import MovieCardGroup from '../components/movie-display';
 
 function Home() {
-    const [selectedGenre, setSelectedGenre] = useState(""); // State to store the selected genre
+    const [selectedGenre, setSelectedGenre] = useState("Action"); // State to store the selected genre
+
+    useEffect(() => {
+        fetchMovie(selectedGenre);
+        console.log('useEffect')
+    }, []);
 
     function fetchMovie(genre) {
         fetch(`/browse-genre/${genre}`).then((res) => {
@@ -24,6 +29,7 @@ function Home() {
 
     // Function to handle genre selection
     function handleGenreChange(event) {
+        console.log('handleChange')
         const selectedGenre = event.target.value;
         setSelectedGenre(selectedGenre); // Update the selected genre in state
         fetchMovie(selectedGenre); // Call the fetchMovie function with the selected genre
@@ -39,7 +45,7 @@ function Home() {
                     <Row>
                         <Col md={2} className="mb-3">
                             <Form.Select aria-label="Genre" onChange={handleGenreChange}>
-                                <option>Select Genre</option>
+                                <option >Select Genre</option>
                                 <option value="action">Action</option>
                                 <option value="adventure">Adventure</option>
                                 <option value="animation">Animation</option>

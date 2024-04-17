@@ -5,13 +5,13 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings
+from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings, reset_password
 
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = '123456'
+app.config['MYSQL_PASSWORD'] = 'Steelers19!'
 app.config['MYSQL_DB'] = 'FlickFinder'
 app.config['SECRET_KEY'] = 'secret1'
 
@@ -166,7 +166,12 @@ class MovieSearch(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
         return search_movie_by_name(movieName)
 
-
+class ChangePassword(Resource):
+    def post(self):
+        jsonData = request.get_json()
+        newPassword = jsonData["newPassword"]
+        reset_password(newPassword, current_user.id)
+        return {}
 api.add_resource(TopRecommendations, "/top-recommendations")
 api.add_resource(Movie, "/movie/<movieName>")
 api.add_resource(SignUp, "/sign-up")
@@ -179,6 +184,7 @@ api.add_resource(Profile, "/profile")
 api.add_resource(RateMovie, "/movie/<movieName>/rating") # TODO: change these to id in case there are movies with duplicate names
 api.add_resource(UserOpinion, "/movie/<movieName>/opinion") # TODO: same ^
 api.add_resource(MovieSearch, "/search-movies/<movieName>")
+api.add_resource(ChangePassword, "/changepassword")
 
 if __name__ == "__main__":
     app.run(debug=True)

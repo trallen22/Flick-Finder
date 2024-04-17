@@ -6,13 +6,13 @@ from email.message import EmailMessage
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-# PASSWORD = '123456'
+PASSWORD = 'Steelers19!'
 EMAILADDRESS = 'flick.finder.recommender@gmail.com'
 EMAILPASSWORD = 'ywvz lzum yfei pmah' # to login online -> Movie123
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
-		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) # , password=PASSWORD)
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE , password=PASSWORD)
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()
@@ -297,7 +297,8 @@ def get_recovery_code(userId:int) -> str:
 	code = sql_query("SELECT username FROM users WHERE user_id=%s", (userId,))[0]['username']
 	return code
 
-def reset_password(userId:int) -> None:
+def reset_password(userId:int, password) -> None:
+	sql_query("UPDATE users SET password=%s WHERE user_id=%s", (password, userId));
 	return 
 
 # ##############

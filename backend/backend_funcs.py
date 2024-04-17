@@ -7,7 +7,8 @@ from email.message import EmailMessage
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-PASSWORD = 'Steelers19!'
+#PASSWORD = 'Steelers19!'
+PASSWORD = '123456'
 EMAILADDRESS = 'flick.finder.recommender@gmail.com'
 EMAILPASSWORD = 'ywvz lzum yfei pmah' # to login online -> Movie123
 
@@ -44,7 +45,7 @@ def get_movie_details_by_name(movieName:str) -> dict:
 	curMovies = sql_query(sqlStr, (movieTitle,))
 	try:
 		curMovie = curMovies[0] # this checks if movie with given title is found in db
-		movieDict = {"title":curMovie["title"], 
+		movieDict = {"title":curMovie["title"],
 					"description":curMovie["description"],
 					"genre":curMovie['genres'],
 					"id":curMovie["movie_id"]}
@@ -90,7 +91,7 @@ def search_by_genre(genre:str) -> dict:
     movieDict = {}
     newGenre = genre.replace('_', ' ')
     
-    sqlStr = "SELECT * FROM movies WHERE genres LIKE %s ORDER BY popularity DESC LIMIT 20;"
+    sqlStr = "SELECT * FROM movies WHERE genres LIKE %s ORDER BY popularity DESC LIMIT 30;"
     curMovies = sql_query(sqlStr, ('%' + newGenre + '%',))
     
     i = 0
@@ -99,7 +100,7 @@ def search_by_genre(genre:str) -> dict:
         i += 1
 
     # Extract 5 random movies from movieDict
-    random_movies = dict(random.sample(movieDict.items(), 5))
+    random_movies = dict(random.sample(movieDict.items(), 10))
     
     return random_movies
 

@@ -99,7 +99,7 @@ function Profile() {
             </Row>
             <Row>
                 <Col>
-                    <ButtonGroup className="w-100">
+                    <ButtonGroup className="w-100 mb-3">
                     <Button
                         variant={curTab === 'favorites' ? 'primary' : 'secondary'} 
                         onClick={() => setActiveTab('favorites')}

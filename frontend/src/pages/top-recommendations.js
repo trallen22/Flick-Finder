@@ -29,10 +29,10 @@ function TopRecommendations() {
 
   return (
     <div className="recommend-wrapper">
-      <Button variant="primary" onClick={fetchRecommendations} className="recommend-button">
+      <Button variant="primary" onClick={fetchRecommendations} className="recommend-button m-3">
         {spin ? (
           <>
-            <span className="mr-2">Loading...</span>
+            <span className="mr-2 m-3">Loading...</span>
             <Spinner
               as="span"
               animation="border"

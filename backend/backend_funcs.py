@@ -1,18 +1,19 @@
 import mysql.connector 
 import sys
 import smtplib
+import random
 from email.message import EmailMessage
 
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-# PASSWORD = '123456'
+PASSWORD = '123456'
 EMAILADDRESS = 'flick.finder.recommender@gmail.com'
 EMAILPASSWORD = 'ywvz lzum yfei pmah' # to login online -> Movie123
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
-		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) # , password=PASSWORD)
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE , password=PASSWORD)
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()
@@ -74,14 +75,34 @@ def get_movie_details_by_id(movieId) -> dict:
 def search_movie_by_name(movieName:str) -> dict:
 	movieDict = {}
 	movieTitle = movieName.replace('_', ' ')
-	sqlStr = "SELECT * FROM movies WHERE title=%s;"
-	curMovies = sql_query(sqlStr, (movieTitle,))
+	# sqlStr = "SELECT * FROM movies WHERE title LIKE %s;"
+	# curMovies = sql_query(sqlStr, (movieTitle,))
+	# movieTitle = movieName.replace('_', ' ')
+	sqlStr = "SELECT * FROM movies WHERE title LIKE %s ORDER BY popularity DESC LIMIT 10;"
+	curMovies = sql_query(sqlStr, ('%' + movieTitle + '%',))
 	i = 0
 	for curMovie in curMovies:
-		print(curMovie["movie_id"])
 		movieDict[f"movie{i}"] = get_movie_details_by_id(curMovie["movie_id"])
 		i += 1
 	return movieDict
+
+def search_by_genre(genre:str) -> dict:
+    movieDict = {}
+    newGenre = genre.replace('_', ' ')
+    
+    sqlStr = "SELECT * FROM movies WHERE genres LIKE %s ORDER BY popularity DESC LIMIT 20;"
+    curMovies = sql_query(sqlStr, ('%' + newGenre + '%',))
+    
+    i = 0
+    for curMovie in curMovies:
+        movieDict[f"movie{i}"] = get_movie_details_by_id(curMovie["movie_id"])
+        i += 1
+
+    # Extract 5 random movies from movieDict
+    random_movies = dict(random.sample(movieDict.items(), 5))
+    
+    return random_movies
+
 
 def get_recent_movies(userId:int) -> dict:
 	interactedMovies = get_movies_interacted_with(userId)

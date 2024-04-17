@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 HOST = 'localhost'
 USER = 'root'
-# PASSWORD = 'Steelers19!'
+PASSWORD = '123456'
 DATABASE = "FlickFinder"
 META_FILENAME = "movie-data-csv/movies_metadata.csv"
 KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
@@ -44,7 +44,7 @@ def sqlInsert(curCursor, table, curTuple):
 os.system(f'mysql FlickFinder < "{os.getcwd()}/flick_finder_schema.sql"')
 
 try: 
-	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) #, password=PASSWORD) 
+	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE, password=PASSWORD) 
 except Exception as e:
 	print(f'error: {e}')
 	sys.exit()
@@ -96,7 +96,8 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		curRuntime = mRow["runtime"] if mRow["runtime"] != '' else -1
 		# release date
 		curReleaseDate = mRow["release_date"] if mRow["release_date"] != '' else '0001-01-01'
-		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curCrew, curOverview, curKeywords, curRuntime, curReleaseDate))
+		curPopularity = mRow["popularity"] if mRow["popularity"] != '' else 0
+		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curCrew, curOverview, curKeywords, curRuntime, curReleaseDate, curPopularity))
 		pbar.update(1)
 		
 connection.commit()

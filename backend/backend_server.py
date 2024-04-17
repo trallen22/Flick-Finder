@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-# app.config['MYSQL_PASSWORD'] = '123456'
+app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'FlickFinder'
 app.config['SECRET_KEY'] = 'secret1'
 
@@ -62,7 +62,7 @@ class Logout(Resource):
     # @login_required
     def get(self):
         logout_user()
-        return redirect('/home')
+        return
 
 class GetUser(Resource):
     def get(self):
@@ -166,6 +166,10 @@ class UserOpinion(Resource):
 class MovieSearch(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
         return search_movie_by_name(movieName)
+    
+class BrowseGenre(Resource):
+    def get(self, genre:str): # TODO: need to look into how spaces in titles are being represented in fetch 
+        return search_by_genre(genre)
 
 class SendRecoveryEmail(Resource):
     def post(self):
@@ -197,6 +201,7 @@ api.add_resource(UserOpinion, "/movie/<movieName>/opinion") # TODO: same ^
 api.add_resource(MovieSearch, "/search-movies/<movieName>")
 api.add_resource(ResetPassword, "/reset-password")
 api.add_resource(SendRecoveryEmail, "/send-recovery")
+api.add_resource(BrowseGenre, "/browse-genre/<genre>")
 
 if __name__ == "__main__":
     app.run(debug=True)

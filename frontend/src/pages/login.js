@@ -7,10 +7,12 @@ import Form from 'react-bootstrap/Form';
 // import InputGroup from 'react-bootstrap/InputGroup';
 import Button from 'react-bootstrap/Button';
 import Nav from 'react-bootstrap/Nav';
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const [username, setLoginUsername] = useState("");
     const [password, setLoginPassword] = useState("");
+    let navigate = useNavigate(); 
 
     const logInUser = async () => {
 		console.log(username, password);
@@ -28,8 +30,17 @@ function LoginPage() {
 			// setResponse(data);
 			console.log('login status: ', data.status);
 			console.log('login details: ', data.details);
+
+            if(data.status == 'failed'){
+                alert("Login Failed!")
+            }else{
+                let path = `/home`; 
+                navigate(path);
+                window.location.reload();
+            }
 		} catch (error) {
 			console.error('Error during login:', error);
+            alert("Login Failed!")
 		}
 	};
 
@@ -41,7 +52,7 @@ function LoginPage() {
                     <Form>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Control type="text"
-                                          placeholder="Email Address"
+                                          placeholder="Username"
                                           value={username}
                                           onChange={(e) => setLoginUsername(e.target.value)}/>
                         </Form.Group>

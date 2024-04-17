@@ -9,6 +9,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Spinner from 'react-bootstrap/Spinner';
 import MovieCardGroup from '../components/movie-display';
 import RatingsCardGroup from "../components/ratings-display";
+import { Link } from "react-router-dom"; // Import Link for routing
 
 function Profile() {
 
@@ -116,6 +117,10 @@ function Profile() {
                         variant={curTab === 'ratings' ? 'primary' : 'secondary'}
                         onClick={() => setActiveTab('ratings')}
                     >Ratings</Button>
+                    {/* Add Account Settings Button */}
+                    <Link to="/accountSettings">
+                        <Button variant="secondary">Account Settings</Button>
+                    </Link>
                     </ButtonGroup>
                 </Col>
             </Row>

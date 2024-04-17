@@ -193,8 +193,9 @@ class ChangePassword(Resource):
     def post(self):
         jsonData = request.get_json()
         newPassword = jsonData["newPassword"]
-        reset_password(newPassword, current_user.id)
+        reset_password(newPassword, current_user.id)  # Make sure newPassword is provided
         return {}
+
       
 api.add_resource(TopRecommendations, "/top-recommendations")
 api.add_resource(Movie, "/movie/<movieName>")

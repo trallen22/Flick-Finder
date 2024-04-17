@@ -168,9 +168,6 @@ def rate_movie(movieName:str, userId:int, userRating:float) -> None:
 		sql_query(rateStr, (userId, movieId, userRating, '0000-01-01'))
 	return 
 
-# TODO: need to look into how to represent userOpinion, I think int is the best way   
-# --> could make dislike = 2, like = 3, favorite = 4, check opinion = 1, 0 to remove an opinion from db 
-# TODO: should getting user opinion be it's own function? I think no 
 def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
 	"""
 	parameter: 
@@ -292,14 +289,14 @@ def weight_associated_movies(userId:int) -> dict:
 	sortedWeightMovDict = dict(sorted(weightedMovieDict.items(), key=lambda x:x[1], reverse=True))
 	return sortedWeightMovDict
 
-def send_recovery_email(userId:int) -> None:
+def send_recovery_email(userEmail:str) -> None:
 	msg = EmailMessage()
 	msg['Subject'] = "Password Reset"
 	msg['From'] = EMAILADDRESS
 	# msg['To'] = sql_query("SELECT email FROM users WHERE user_id=%s", (userId,))[0]['email']
 	msg['To'] = "trallen@davidson.edu"
 	
-	recoveryCode = get_recovery_code(userId)
+	recoveryCode = get_recovery_code(userEmail)
 	msg.set_content(f"Your recovery code: {recoveryCode}")
 	try:
 		with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
@@ -314,36 +311,12 @@ def send_recovery_email(userId:int) -> None:
 	except Exception as e:
 		print(f'{e}')
 
-def get_recovery_code(userId:int) -> str:
-	code = sql_query("SELECT username FROM users WHERE user_id=%s", (userId,))[0]['username']
+def get_recovery_code(userEmail:str) -> str:
+	code = sql_query("SELECT username FROM users WHERE email=%s", (userEmail,))[0]['username']
 	return code
 
-def reset_password(userId:int) -> None:
+def reset_password(userEmail:int, inputRecoveryCode:str, newPassword:str) -> None:
+	userRecoveryCode = get_recovery_code(userEmail)
+	if (inputRecoveryCode == userRecoveryCode):
+		sql_query("UPDATE users SET password=%s WHERE email=%s",(newPassword, userEmail))
 	return 
-
-# ##############
-# Used for testing 
-# print("don't forget to comment the code below!!") 
-# CUR_USER = 1
-# rate_movie("Prometheus", CUR_USER, 5)
-# rate_movie("Finding Nemo", CUR_USER, 1)
-# rate_movie("Forrest Gump", CUR_USER, 2)
-# rate_movie("Walk on Water", CUR_USER, 1)
-# rate_movie("The Dark Knight", CUR_USER, 5)
-# rate_movie("Batman Begins", CUR_USER, 5)
-
-# print(top_recommendations(CUR_USER))
-
-# print(user_opinion_of_movie("Batman Begins", CUR_USER, 3)) 
-# print(user_opinion_of_movie("Prometheus", CUR_USER, 4)) 
-# print(user_opinion_of_movie("The Dark Knight", CUR_USER, 1)) 
-
-# print(get_liked_movies(1))
-# print(get_favorite_movies(1))
-# print(get_disliked_movies(1))
-
-# print(get_movies_interacted_with(1))
-# print(dict(sorted(get_user_ratings(1).items(), key=lambda x:x[1], reverse=True)))
-# print(get_sorted_ratings(1))
-# send_recovery_email(1)
-# print(get_recovery_code(1))

@@ -16,6 +16,7 @@ import SignUp from './pages/sign-up';
 import LoginPage from './pages/login';
 import Logout from './pages/logout';
 import SearchMovies from './pages/search-movies.js';
+import ForgotPassword from './pages/forgot-password';
 
 
 function App() {
@@ -48,6 +49,10 @@ function App() {
 					<Route
 						exact path="/login"
 						element={<LoginPage />}
+					></Route>
+					<Route
+						exact path="/forgot-password"
+						element={<ForgotPassword />}
 					></Route>
 					<Route
 						exact path="/logout"

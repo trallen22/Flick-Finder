@@ -15,16 +15,6 @@ function SearchMovies() {
     genre: "unable to get genreas"
 });
 
-// useEffect(() => {
-//     fetch(location.pathname).then((res) => {
-//         res.json().then((data) => {
-//             setMovieData(data);
-//         })
-//         .catch((error) => {
-//             console.log(error);
-//         })
-//     });
-// }, [location.pathname]);
   useEffect(() => {
     fetch(location.pathname).then((res) => {
       res.json().then((data) => {

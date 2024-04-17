@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings, reset_password
+from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings, reset_password, send_recovery_email, search_by_genre
 
 app = Flask(__name__)
 
@@ -62,7 +62,7 @@ class Logout(Resource):
     # @login_required
     def get(self):
         logout_user()
-        return redirect('/home')
+        return
 
 class GetUser(Resource):
     def get(self):
@@ -88,6 +88,7 @@ class Profile(Resource):
         return profileStatus
 
 class SignUp(Resource):
+    # TODO: I think we can get rid of this GET request 
     def get(self):
         return jsonify({"movie0": { "title": "no title for movie 1", "description": "no description" }, 
                 "movie1": { "title": "no title for movie 2", "description": "no description" }, 
@@ -165,13 +166,36 @@ class UserOpinion(Resource):
 class MovieSearch(Resource):
     def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
         return search_movie_by_name(movieName)
+    
+class BrowseGenre(Resource):
+    def get(self, genre:str): # TODO: need to look into how spaces in titles are being represented in fetch 
+        return search_by_genre(genre)
 
+class SendRecoveryEmail(Resource):
+    def post(self):
+        jsonData = request.get_json()
+        userEmail = jsonData['email']
+        send_recovery_email(userEmail)
+        return { "status": "success", "details": "recovery code has been sent by email" }
+
+class ResetPassword(Resource):
+    def post(self):
+        resetStatus = { "status": "success", "details": "successfully reset password" }
+        jsonData = request.get_json()
+        userEmail = jsonData['email']
+        recoveryCode = jsonData['recovery_code']
+        newPassword = jsonData['new_password']
+        hashedPassword = bcrypt.generate_password_hash(newPassword).decode('utf-8')
+        reset_password(userEmail, recoveryCode, hashedPassword)
+        return resetStatus
+      
 class ChangePassword(Resource):
     def post(self):
         jsonData = request.get_json()
         newPassword = jsonData["newPassword"]
         reset_password(newPassword, current_user.id)
         return {}
+      
 api.add_resource(TopRecommendations, "/top-recommendations")
 api.add_resource(Movie, "/movie/<movieName>")
 api.add_resource(SignUp, "/sign-up")
@@ -179,11 +203,12 @@ api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")
 api.add_resource(GetUser, "/get-user")
 api.add_resource(Profile, "/profile")
-# TODO: need to decide how to setup url; /movie/<movieName>/rating or /rating/<movieName>; 
-#       former might be easier to implement with react useLocation() 
 api.add_resource(RateMovie, "/movie/<movieName>/rating") # TODO: change these to id in case there are movies with duplicate names
 api.add_resource(UserOpinion, "/movie/<movieName>/opinion") # TODO: same ^
 api.add_resource(MovieSearch, "/search-movies/<movieName>")
+api.add_resource(ResetPassword, "/reset-password")
+api.add_resource(SendRecoveryEmail, "/send-recovery")
+api.add_resource(BrowseGenre, "/browse-genre/<genre>")
 api.add_resource(ChangePassword, "/changepassword")
 
 if __name__ == "__main__":

@@ -1,3 +1,17 @@
-body{
-  background-color: rgb(24, 24, 24);
+.home-header{
+  height: 400px;
+  background-color: black;
+  margin-bottom: 30px;
+}
+
+.movie-content{
+  justify-content: left;
+  color: white;
+}
+
+/* home.css */
+
+.popular-movies {
+  color: white; /* Set text color to white */
+  text-align: center; /* Align text to the left */
 }

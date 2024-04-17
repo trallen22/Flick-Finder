@@ -1,0 +1,50 @@
+/* CSS for Account Settings Page */
+
+/* Positioning the "Account Settings" title */
+.account-settings-title {
+    position: absolute;
+    top: 20px; /* Adjust as needed */
+    left: 20px; /* Adjust as needed */
+}
+
+/* Positioning the "Back to Profile" button */
+.text-end {
+    text-align: right;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+/* Styling the profile container */
+.profile-container {
+    position: relative; /* Ensure relative positioning for absolute positioning within */
+    padding-top: 60px; /* Adjust as needed */
+}
+
+/* Styling for profile header */
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Styling for profile picture */
+#profile-picture {
+    width: 150px; /* Adjust as needed */
+    height: 150px; /* Adjust as needed */
+    margin: auto; /* Center the image */
+}
+
+/* Styling for user name */
+#user-name {
+    margin-top: 20px;
+}
+
+/* Styling for account settings banner */
+#accountSettings-banner {
+    margin-top: 30px;
+}
+
+/* Styling for username and email */
+#accountSettings-banner h2 {
+    margin-bottom: 10px;
+}

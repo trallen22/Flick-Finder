@@ -7,7 +7,7 @@ from email.message import EmailMessage
 HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
-PASSWORD = '123456'
+PASSWORD = 'Steelers19!'
 EMAILADDRESS = 'flick.finder.recommender@gmail.com'
 EMAILPASSWORD = 'ywvz lzum yfei pmah' # to login online -> Movie123
 
@@ -319,4 +319,8 @@ def reset_password(userEmail:int, inputRecoveryCode:str, newPassword:str) -> Non
 	userRecoveryCode = get_recovery_code(userEmail)
 	if (inputRecoveryCode == userRecoveryCode):
 		sql_query("UPDATE users SET password=%s WHERE email=%s",(newPassword, userEmail))
-	return 
+
+#def reset_password(userId:int, password) -> None:
+	#sql_query("UPDATE users SET password=%s WHERE user_id=%s", (password, userId));
+
+	#return 

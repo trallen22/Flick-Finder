@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify, redirect, url_for
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_restful import Resource, Api
 from flask_bcrypt import Bcrypt
-from flask_login import LoginManager, login_required, login_user, logout_user, current_user
+from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
 from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings, reset_password, send_recovery_email, search_by_genre, get_movie_details_by_id
@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 #app.config['MYSQL_PASSWORD'] = 'Steelers19!'
-app.config['MYSQL_PASSWORD'] = '123456'
+# app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'FlickFinder'
 app.config['SECRET_KEY'] = 'secret1'
 
@@ -132,7 +132,6 @@ class Movie(Resource):
         return get_movie_details_by_id(movieId)
 
 class TopRecommendations(Resource):
-    # @login_required
     def get(self):
         # TODO: need to figure out how to handle if no user is logged in 
         # currently returns random movies

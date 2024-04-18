@@ -16,7 +16,7 @@
   background: white;
   border-radius: 25px;
   align-items: center; /* Center align the content inside the header */
-  margin: 30% auto; /* Center horizontally */
+  margin: 10% auto; /* Center horizontally */
   max-width: 800px; /* Adjust the max-width as per your preference */
   padding: 20px; /* Add padding for better appearance */
 }

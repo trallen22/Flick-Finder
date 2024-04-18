@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, logout_user, current_user
 from flask_mysqldb import MySQL
 from user import User
-from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings, reset_password, send_recovery_email, search_by_genre
+from backend_funcs import top_recommendations, get_movie_details_by_name, sql_query, rate_movie, user_opinion_of_movie, search_movie_by_name, get_disliked_movies, get_liked_movies, get_favorite_movies, get_recent_movies, get_sorted_ratings, reset_password, send_recovery_email, search_by_genre, get_movie_details_by_id
 
 app = Flask(__name__)
 
@@ -128,8 +128,8 @@ class SignUp(Resource):
         return signupStatus  
 
 class Movie(Resource):
-    def get(self, movieName:str): # TODO: need to look into how spaces in titles are being represented in fetch 
-        return get_movie_details_by_name(movieName)
+    def get(self, movieId:str): # TODO: need to look into how spaces in titles are being represented in fetch 
+        return get_movie_details_by_id(movieId)
 
 class TopRecommendations(Resource):
     def get(self):
@@ -197,7 +197,7 @@ class ChangePassword(Resource):
         return {}
       
 api.add_resource(TopRecommendations, "/top-recommendations")
-api.add_resource(Movie, "/movie/<movieName>")
+api.add_resource(Movie, "/movie/<movieId>")
 api.add_resource(SignUp, "/sign-up")
 api.add_resource(Login, "/login")
 api.add_resource(Logout, "/logout")

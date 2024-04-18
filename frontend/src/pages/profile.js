@@ -27,15 +27,19 @@ function Profile() {
     const [curTab, setTab] = useState("")
     
     useEffect(() => {
+        setIsLoading(true); //Set loading state to true when fetching user data
         fetch("/profile").then((res) => {
             res.json().then((data) => {
                 setUser(data);
+                setIsLoading(false); // Set loading state to false after user data is loaded
             })
             .catch((error) => {
                 console.log(error);
+                setIsLoading(false); // Set loading state to false if an error occurs
             })
         });
     }, []);
+    
 
     async function setActiveTab(activeTab) {
         console.log(activeTab);
@@ -43,7 +47,7 @@ function Profile() {
         try {
             setDisplay(true);
             setTab(activeTab);
-            setIsLoading(true); // Set loading state to true when fetching data
+            // setIsLoading(true); // Set loading state to true when fetching data
             if (activeTab === "likes") {
                 setDetails(curUser.likes);
             } else if (activeTab === "recents") {
@@ -57,7 +61,7 @@ function Profile() {
         } catch (error) {
             console.error('Error during changing opinion')
         } finally {
-            setIsLoading(false); // Set loading state to false after data fetching completes
+            // setIsLoading(false); // Set loading state to false after data fetching completes
         }
     }
 
@@ -78,6 +82,7 @@ function Profile() {
     // };
 
     // Function to fetch poster paths for all movies in opinion
+
     // const fetchPosterPaths = async (opinion) => {
     //     const movieKeys = Object.values(opinion);
     //     const movieDataPromises = movieKeys.map(movieTitle => fetchMovieData(movieTitle));
@@ -121,7 +126,7 @@ function Profile() {
             </Row>
             <Row>
                 {isLoading ? ( // Display spinner when data is loading
-                    <Spinner animation="border" role="status">
+                    <Spinner animation="border" role="status" className="align-items-middle">
                         <span className="visually-hidden">Loading...</span>
                     </Spinner>
                 ) : (

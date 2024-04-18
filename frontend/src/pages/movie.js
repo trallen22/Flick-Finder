@@ -103,17 +103,32 @@ function Movie() {
 		}
     }
 
+    console.log(movieDetails.genre)
+
     return (
         <Container className="Movie">
         <Row>
             <Col md={{ span: 6, offset: 3 }}>
             <div className="movie-header">
                 <h1>{movieDetails.title}</h1>
-                <p>{movieDetails.description}</p>
-                <p>{movieDetails.genre}</p>
+                <Row>
+                    <Col>
+                        <h5 className="text-start">Director: {movieDetails.director}</h5>
+                        <h5 className="text-start">Genre: {movieDetails.genre[0]}</h5>
+                        <h5 className="text-start">Runtime: {movieDetails.runtime} minutes</h5>
+                    </Col>
+                    <Col>
+                        <h5 className="text-start">Summary:</h5>
+                        <h5 className="text-start">{movieDetails.description}</h5>
+                    </Col>
+
+                </Row>
+                {/* <h5>Director: {movieDetails.director}</h5> */}
+                {/* <p>Cast: {movieDetails.cast[0]}</p> */}
+                {/* <h5>Summary: {movieDetails.description}</h5> */}
                 <div className="buttons-container">
                 <Row>
-                    <Col xs={2}>
+                    <Col xs={12} sm={3} lg={2}>
                         <DropdownButton id="dropdown-basic-button" title="Rate">
                         <Dropdown.Item onClick={() => { handleRating(5);}}>5</Dropdown.Item>
                         <Dropdown.Item onClick={() => { handleRating(4.5);}}>4.5</Dropdown.Item>
@@ -127,12 +142,15 @@ function Movie() {
                         <Dropdown.Item onClick={() => { handleRating(0.5);}}>0.5</Dropdown.Item>
                         </DropdownButton>
                     </Col>
-                    <Col xs={1}>
+                    <Col xs={12} sm={2} lg={1}>
                         <Button variant="primary" onClick={handleLike} className="like-button">&hearts;</Button>
                     </Col>
-                    <Col xs={1}>
+                    <Col xs={12} sm={2} lg={1}>
                         <Button variant="primary" onClick={handleFavorite} className="fav-button">&#9733;</Button>
                     </Col>
+                    {/* <Col className="text-end align-bottom">
+                        <h4>Runtime: {movieDetails.runtime} minutes</h4>
+                    </Col> */}
                 </Row>
                 </div>
             </div>

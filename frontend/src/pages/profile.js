@@ -6,6 +6,7 @@ import Image from 'react-bootstrap/Image';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import Spinner from 'react-bootstrap/Spinner';
 import MovieCardGroup from '../components/movie-display';
 import RatingsCardGroup from "../components/ratings-display";
 
@@ -21,6 +22,7 @@ function Profile() {
     });
 
     const [curDetails, setDetails] = useState([])
+    const [isLoading, setIsLoading] = useState(false); // State to track data loading
     const [movieDisplay, setDisplay] = useState(true)
     const [curTab, setTab] = useState("")
     
@@ -41,6 +43,7 @@ function Profile() {
         try {
             setDisplay(true);
             setTab(activeTab);
+            setIsLoading(true); // Set loading state to true when fetching data
             if (activeTab === "likes") {
                 setDetails(curUser.likes);
             } else if (activeTab === "recents") {
@@ -53,6 +56,8 @@ function Profile() {
             }
         } catch (error) {
             console.error('Error during changing opinion')
+        } finally {
+            setIsLoading(false); // Set loading state to false after data fetching completes
         }
     }
 
@@ -94,7 +99,7 @@ function Profile() {
             </Row>
             <Row>
                 <Col>
-                    <ButtonGroup className="w-100">
+                    <ButtonGroup className="w-100 mb-3">
                     <Button
                         variant={curTab === 'favorites' ? 'primary' : 'secondary'} 
                         onClick={() => setActiveTab('favorites')}
@@ -115,20 +120,23 @@ function Profile() {
                 </Col>
             </Row>
             <Row>
-                {movieDisplay && <div className="recommend-wrapper">
-                <Col>
-                    <MovieCardGroup movieData={curDetails} />
-                </Col>
-                </div>}
-                {!movieDisplay && <div className="recommend-wrapper">
-                    <Col>
+                {isLoading ? ( // Display spinner when data is loading
+                    <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                ) : (
+                    // Display MovieCardGroup or RatingsCardGroup based on movieDisplay state
+                    movieDisplay ? (
+                        <MovieCardGroup movieData={curDetails} />
+                    ) : (
                         <RatingsCardGroup movieData={curDetails} />
-                    </Col>
-                </div>}
+                    )
+                )}
             </Row>
         </Container>
     );
 }
 
 export default Profile;
+
 

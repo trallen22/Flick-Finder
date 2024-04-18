@@ -11,6 +11,7 @@ app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
+#app.config['MYSQL_PASSWORD'] = 'Steelers19!'
 # app.config['MYSQL_PASSWORD'] = '123456'
 app.config['MYSQL_DB'] = 'FlickFinder'
 app.config['SECRET_KEY'] = 'secret1'
@@ -188,7 +189,14 @@ class ResetPassword(Resource):
         hashedPassword = bcrypt.generate_password_hash(newPassword).decode('utf-8')
         reset_password(userEmail, recoveryCode, hashedPassword)
         return resetStatus
-
+      
+class ChangePassword(Resource):
+    def post(self):
+        jsonData = request.get_json()
+        newPassword = jsonData["newPassword"]
+        reset_password(newPassword, current_user.id)
+        return {}
+      
 api.add_resource(TopRecommendations, "/top-recommendations")
 api.add_resource(Movie, "/movie/<movieName>")
 api.add_resource(SignUp, "/sign-up")
@@ -202,6 +210,7 @@ api.add_resource(MovieSearch, "/search-movies/<movieName>")
 api.add_resource(ResetPassword, "/reset-password")
 api.add_resource(SendRecoveryEmail, "/send-recovery")
 api.add_resource(BrowseGenre, "/browse-genre/<genre>")
+api.add_resource(ChangePassword, "/changepassword")
 
 if __name__ == "__main__":
     app.run(debug=True)

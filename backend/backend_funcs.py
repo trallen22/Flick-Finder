@@ -183,8 +183,12 @@ def user_opinion_of_movie(movieName:str, userId:int, userOpinion:int) -> None:
 	# TODO: Do we want to implement the date of liking a movie? 
 	if userOpinion > 1:
 		if len(check):
-			updateStr = "UPDATE likes SET is_liked=%s WHERE movie_id=%s;"
-			sql_query(updateStr, (userOpinion, movieId))
+			if(check[0]['is_liked'] == userOpinion):
+				deleteStr = "DELETE FROM likes WHERE movie_id=%s AND user_id=%s;"
+				sql_query(deleteStr, (movieId, userId))
+			else:
+				updateStr = "UPDATE likes SET is_liked=%s WHERE movie_id=%s;"
+				sql_query(updateStr, (userOpinion, movieId))
 		else:
 			rateStr = "INSERT INTO likes VALUES (%s, %s, %s);"
 			sql_query(rateStr, (userId, movieId, userOpinion))

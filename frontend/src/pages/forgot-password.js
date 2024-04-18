@@ -65,7 +65,7 @@ function ForgotPassword() {
                             </Row>
                             <Row>
                                 <Col>
-                                    <p onClick={() => setCurPage(true)}>I already have a reset code</p>
+                                    <p onClick={() => setCurPage(true)}>I already have a recovery code</p>
                                 </Col>
                             </Row>
                         </Form>

@@ -70,15 +70,23 @@ def get_movie_details_by_id(movieId) -> dict:
 	curMovies = sql_query(sqlStr, (movieId,))
 	try:
 		curMovie = curMovies[0] # this checks if movie with given title is found in db
-		movieDict = {"title":curMovie["title"], 
+		movieDict = {"title":curMovie["title"],
 					"description":curMovie["description"],
-					"genre":curMovie['genres'],
-					"id":curMovie["movie_id"]}
+					"genre":eval(curMovie['genres']),
+					"id":curMovie["movie_id"],
+					"director":curMovie["director"],
+					"cast":eval(curMovie["cast"]),
+					"runtime": curMovie["runtime"]
+					}
 	except IndexError:
 		movieDict = {"title":f"no movie found with id '{movieId}'", 
 					"description":"no description available", 
 					"genre":"no genres available",
-					"id":"no id available"}
+					"id":"no id available",
+					"director": "no director",
+					"cast":"no cast",
+					"runtime": "no runtime"
+					}
 	return movieDict
 
 def search_movie_by_name(movieName:str) -> dict:

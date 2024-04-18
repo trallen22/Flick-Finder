@@ -48,7 +48,7 @@ const MovieCardGroup = ({ movieData }) => {
       ) : (
         <CardGroup>
           {updatedMovies.map((movie, index) => (
-            <Link key={index} to={`/movie/${movie.title}`} style={{ textDecoration: 'none' }}>
+            <Link key={index} to={`/movie/${movie.id}`} style={{ textDecoration: 'none' }}>
               <Card style={{ width: '16rem', marginBottom: '20px' }}>
                 {movie.posterURL && <Card.Img variant="top" src={movie.posterURL} />}
               </Card>

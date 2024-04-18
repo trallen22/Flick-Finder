@@ -20,6 +20,8 @@ function Movie() {
         genre: "unable to get genreas"
     });
 
+    const [posterPath, setPosterPath] = useState('');
+
     // const [movie_rating, setRating] = useState(0);
 
     useEffect(() => {
@@ -32,6 +34,25 @@ function Movie() {
             })
         });
     }, [location.pathname]);
+    
+    useEffect(() => {
+        if (movieDetails.id) {
+            getPoster(movieDetails);
+        }
+    }, [movieDetails]);
+    
+
+
+    function getPoster(movies){
+        fetch(`https://api.themoviedb.org/3/movie/${movies.id}?api_key=1b8a109c8da35481eb8e3f6a4d977ace&language=en-US`)
+              .then(res => res.json())
+              .then(data => {
+                console.log(data)
+                setPosterPath(`https://image.tmdb.org/t/p/w200${data.poster_path}`)
+                //posterURL: `https://image.tmdb.org/t/p/w200${data.poster_path}`
+              });
+
+    }
 
     async function handleLike(){
         console.log('Liked')
@@ -103,62 +124,64 @@ function Movie() {
 		}
     }
 
-    console.log(movieDetails.genre)
+    console.log(posterPath)
+    console.log(movieDetails)
 
     return (
         <Container className="Movie">
-        <Row>
-            <Col md={{ span: 6, offset: 3 }}>
-            <div className="movie-header">
-                <h1>{movieDetails.title}</h1>
-                <Row>
-                    <Col>
-                        <h5 className="text-start">Director: {movieDetails.director}</h5>
-                        <h5 className="text-start">Genre: {movieDetails.genre[0]}</h5>
-                        <h5 className="text-start">Runtime: {movieDetails.runtime} minutes</h5>
-                    </Col>
-                    <Col>
-                        <h5 className="text-start">Summary:</h5>
-                        <h5 className="text-start">{movieDetails.description}</h5>
-                    </Col>
+            <Row>
+                <Col md={{ span: 6, offset: 3 }}>
+                    <div className="movie-header">
+                        <h1>{movieDetails.title}</h1>
+                        <Row>
+                            <Col>
+                                {posterPath && <img variant="top" src={posterPath} style={{ width: '16rem' }} />}
+                            </Col>
+                            <Col className="d-flex flex-column text-start justify-content-end">
+                                <h5 className="text-start">Director: {movieDetails.director}</h5>
+                                <h5 className="text-start">Genre: {movieDetails.genre[0]}</h5>
+                                <h5 className="text-start">Runtime: {movieDetails.runtime} minutes</h5>
+                            </Col>
 
-                </Row>
-                {/* <h5>Director: {movieDetails.director}</h5> */}
-                {/* <p>Cast: {movieDetails.cast[0]}</p> */}
-                {/* <h5>Summary: {movieDetails.description}</h5> */}
-                <div className="buttons-container">
-                <Row>
-                    <Col xs={12} sm={3} lg={2}>
-                        <DropdownButton id="dropdown-basic-button" title="Rate">
-                        <Dropdown.Item onClick={() => { handleRating(5);}}>5</Dropdown.Item>
-                        <Dropdown.Item onClick={() => { handleRating(4.5);}}>4.5</Dropdown.Item>
-                        <Dropdown.Item onClick={() => { handleRating(4);}}>4</Dropdown.Item>
-                        <Dropdown.Item onClick={() => { handleRating(3.5);}}>3.5</Dropdown.Item>
-                        <Dropdown.Item onClick={() => { handleRating(3);}}>3</Dropdown.Item>
-                        <Dropdown.Item onClick={() => { handleRating(2.5);}}>2.5</Dropdown.Item>
-                        <Dropdown.Item onClick={() => { handleRating(2);}}>2</Dropdown.Item>
-                        <Dropdown.Item onClick={() => { handleRating(1.5);}}>1.5</Dropdown.Item>
-                        <Dropdown.Item onClick={() => { handleRating(1);}}>1</Dropdown.Item>
-                        <Dropdown.Item onClick={() => { handleRating(0.5);}}>0.5</Dropdown.Item>
-                        </DropdownButton>
-                    </Col>
-                    <Col xs={12} sm={2} lg={1}>
-                        <Button variant="primary" onClick={handleLike} className="like-button">&hearts;</Button>
-                    </Col>
-                    <Col xs={12} sm={2} lg={1}>
-                        <Button variant="primary" onClick={handleFavorite} className="fav-button">&#9733;</Button>
-                    </Col>
-                    {/* <Col className="text-end align-bottom">
-                        <h4>Runtime: {movieDetails.runtime} minutes</h4>
-                    </Col> */}
-                </Row>
-                </div>
-            </div>
-            </Col>
-        </Row>
+                        </Row>
+                        <Row>
+                            <Col>
+                                <p></p>
+                                <h5 className="text-start">Summary:</h5>
+                                <h5 className="text-start">{movieDetails.description}</h5>
+                            </Col>
+                        </Row>
+                        <div className="buttons-container">
+                            <Row>
+                                <Col xs={{ span: 12, offset: 1 }} sm={3} lg={2}>
+                                    <DropdownButton id="dropdown-basic-button" title="Rate">
+                                    <DropdownButton id="dropdown-basic-button" title="Rate">
+                                    <Dropdown.Item onClick={() => { handleRating(5);}}>5</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => { handleRating(4.5);}}>4.5</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => { handleRating(4);}}>4</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => { handleRating(3.5);}}>3.5</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => { handleRating(3);}}>3</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => { handleRating(2.5);}}>2.5</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => { handleRating(2);}}>2</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => { handleRating(1.5);}}>1.5</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => { handleRating(1);}}>1</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => { handleRating(0.5);}}>0.5</Dropdown.Item>
+                                    </DropdownButton>
+                                    </DropdownButton>
+                                </Col>
+                                <Col xs={{span: 12, offset: 1}} sm={2} lg={1}>
+                                    <Button variant="primary" onClick={handleLike} className="like-button">&hearts;</Button>
+                                </Col>
+                                <Col xs={{span: 12, offset: 1}} sm={2} lg={1}>
+                                    <Button variant="primary" onClick={handleFavorite} className="fav-button">&#9733;</Button>
+                                </Col>
+                            </Row>
+                        </div>
+                    </div>
+                </Col>
+            </Row>
         </Container>
-
     );
 }
- 
+
 export default Movie;

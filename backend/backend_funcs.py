@@ -8,13 +8,13 @@ HOST = 'localhost'
 USER = 'root'
 DATABASE = 'FlickFinder'
 #PASSWORD = 'Steelers19!'
-PASSWORD = '123456'
+# PASSWORD = '123456'
 EMAILADDRESS = 'flick.finder.recommender@gmail.com'
 EMAILPASSWORD = 'ywvz lzum yfei pmah' # to login online -> Movie123
 
 def sql_query(sqlString:str, sqlTuple:tuple) -> list:
 	try: 
-		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE , password=PASSWORD)
+		connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) # , password=PASSWORD)
 	except Exception as e:
 		print(f'error: {e}')
 		sys.exit()
@@ -256,7 +256,7 @@ def weight_associated_movies(userId:int) -> dict:
 	"""
 	returns sorterd dictionary of movie_id by weight -> { movie_id: weight from recommender }
 	"""
-	WEIGHT_MULTIPLIER = 1
+	WEIGHT_MULTIPLIER = 2
 	# TODO: could look into how changing these weights affects recommendations 
 	REC_WEIGHTS = {
 		"rec_one": 10, 
@@ -276,13 +276,13 @@ def weight_associated_movies(userId:int) -> dict:
 	weightedMovieDict = dict() # { movie_id: calculated weight }
 	for curMovAndRecs in assocMovieList:
 		try: 
-			curMovRating = userRatingsDict[curMovAndRecs['movie_id']]
+			curMovRating = userRatingsDict[curMovAndRecs['movie_id']] - 1
 		except KeyError: 
 			# TODO: could look into finding a good default value if movie not already rated 
-			curMovRating = 0
+			curMovRating = -0.5
 		for recNum in REC_KEYS:
 			curRecMovieId = curMovAndRecs[recNum]
-			userWeightedCurRec = curMovRating * REC_WEIGHTS[recNum] * WEIGHT_MULTIPLIER
+			userWeightedCurRec = curMovRating * WEIGHT_MULTIPLIER + REC_WEIGHTS[recNum] 
 			try:
 				weightedMovieDict[curRecMovieId] += userWeightedCurRec
 			except KeyError:
@@ -321,7 +321,3 @@ def reset_password(userEmail:int, inputRecoveryCode:str, newPassword:str) -> Non
 	if (inputRecoveryCode == userRecoveryCode):
 		sql_query("UPDATE users SET password=%s WHERE email=%s",(newPassword, userEmail))
 
-#def reset_password(userId:int, password) -> None:
-	#sql_query("UPDATE users SET password=%s WHERE user_id=%s", (password, userId));
-
-	#return 

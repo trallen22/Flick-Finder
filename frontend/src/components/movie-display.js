@@ -3,21 +3,30 @@
 import React, { useEffect, useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
+import Spinner from 'react-bootstrap/Spinner';
 import { Link } from 'react-router-dom';
 
 const MovieCardGroup = ({ movieData }) => {
   const [updatedMovies, setUpdatedMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); 
 
-  console.log('hi')
+  // console.log('hi')
+  // console.log(movieData)
 
   useEffect(() => {
+    setIsLoading(true); 
     const promises = Object.values(movieData).map(movie => {
-      return fetch(`https://api.themoviedb.org/3/search/movie?api_key=1b8a109c8da35481eb8e3f6a4d977ace&query=${encodeURIComponent(movie.title)}`)
+      return fetch(`https://api.themoviedb.org/3/movie/${movie.id}?api_key=1b8a109c8da35481eb8e3f6a4d977ace&language=en-US`)
         .then(res => res.json())
         .then(data => {
-          if (data.results.length > 0) {
-            return { ...movie, posterURL: `https://image.tmdb.org/t/p/w200${data.results[0].poster_path}` };
+          console.log(data)
+          if (Object.keys(movieData).length > 0) {
+            console.log('hi')
+            console.log(data)
+            setIsLoading(false);
+            return { ...movie, posterURL: `https://image.tmdb.org/t/p/w200${data.poster_path}` };
           } else {
+            setIsLoading(false);
             return { ...movie, posterURL: null };
           }
         });
@@ -31,19 +40,23 @@ const MovieCardGroup = ({ movieData }) => {
   console.log(updatedMovies)
 
   return (
-    <CardGroup>
-      {updatedMovies.map((movie, index) => (
-        <Link key={index} to={`/movie/${movie.title}`} style={{ textDecoration: 'none' }}>
-          <Card style={{ width: '16rem', marginBottom: '20px' }}>
-            {movie.posterURL && <Card.Img variant="top" src={movie.posterURL} />}
-            {/* <Card.Body> */}
-              {/* <Card.Title>{movie.title}</Card.Title> */}
-               {/* <Card.Text>{movie.description}</Card.Text>  */}
-            {/* </Card.Body> */}
-          </Card>
-        </Link>
-      ))}
-    </CardGroup>
+    <div>
+      {isLoading ? ( // Display spinner when loading
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      ) : (
+        <CardGroup>
+          {updatedMovies.map((movie, index) => (
+            <Link key={index} to={`/movie/${movie.title}`} style={{ textDecoration: 'none' }}>
+              <Card style={{ width: '16rem', marginBottom: '20px' }}>
+                {movie.posterURL && <Card.Img variant="top" src={movie.posterURL} />}
+              </Card>
+            </Link>
+          ))}
+        </CardGroup>
+      )}
+    </div>
   );
 };
 

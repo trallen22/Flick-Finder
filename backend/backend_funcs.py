@@ -321,7 +321,3 @@ def reset_password(userEmail:int, inputRecoveryCode:str, newPassword:str) -> Non
 	if (inputRecoveryCode == userRecoveryCode):
 		sql_query("UPDATE users SET password=%s WHERE email=%s",(newPassword, userEmail))
 
-#def reset_password(userId:int, password) -> None:
-	#sql_query("UPDATE users SET password=%s WHERE user_id=%s", (password, userId));
-
-	#return 

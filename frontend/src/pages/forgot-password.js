@@ -51,7 +51,7 @@ function ForgotPassword() {
                                 <p>Enter email to send password recovery code</p>
                             </Row>
                             <Row>
-                                <Col>
+                                <Col className="col-8">
                                     <Form.Group className="mb-3" controlId="sendRecoveryEmail">
                                         <Form.Control type="text"
                                                         placeholder="Email Address"
@@ -59,13 +59,15 @@ function ForgotPassword() {
                                                         onChange={(e) => setRecoveryEmail(e.target.value)} />
                                     </Form.Group>
                                 </Col>
-                                <Col>
-                                    <Button type="button" onClick={() => sendRecoveryEmail(recoveryEmail)}>Send Recovery Email</Button>
+                                <Col className="col-4">
+                                    <Button type="button" onClick={() => sendRecoveryEmail(recoveryEmail)}>Send Recovery Code</Button>
                                 </Col>
                             </Row>
                             <Row>
                                 <Col>
-                                    <p onClick={() => setCurPage(true)}>I already have a recovery code</p>
+                                    <p style={{ textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setCurPage(true)}>
+                                        I already have a recovery code &rarr;
+                                    </p>
                                 </Col>
                             </Row>
                         </Form>
@@ -85,14 +87,16 @@ function ForgotPassword() {
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)} />
                             </Form.Group>
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput2">
+                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput3">
                                 <Form.Control type="password"
                                             placeholder="Confirm Password"/>
                             </Form.Group>
                         </Form>
                         <div className="d-flex justify-content-between align-items-center">
                             <Col xs={4}>
-                                <p onClick={() => setCurPage(false)}>back to recovery email</p>
+                                <p style={{ textDecoration: 'underline', cursor: 'pointer' }} onClick={() => setCurPage(false)}>
+                                    &larr; back to recovery email
+                                </p>
                             </Col>
                             <Col xs={4} className="text-center">
                                 <Button type="button" className="primary mb-3" onClick={resetPassword}>

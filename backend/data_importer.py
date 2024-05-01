@@ -1,5 +1,5 @@
 ''' 
-authors: Tristan Allen, Will Cox, and Daniel Carter 
+authors: Tristan Allen, Will Cox, Daniel Carter, and Josiah Jackson
 
 reads data from the NFL Play by Play csv and 
 imports it into a sql database NFLdata 

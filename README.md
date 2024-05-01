@@ -15,7 +15,7 @@ FlickFinder is a full stack application that utilizes React.JS, Python-Flask, an
 
 ### Mac OS, Windows, Linux
 
-[Node Package Manager]([https://pages.github.com/](https://nodejs.org/en/learn/getting-started/an-introduction-to-the-npm-package-manager))
-[Python](https://www.python.org/)
+- [Node Package Manager]([https://pages.github.com/](https://nodejs.org/en/learn/getting-started/an-introduction-to-the-npm-package-manager))
+- [Python](https://www.python.org/)
 
 ## How to Run

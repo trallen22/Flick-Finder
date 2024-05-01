@@ -10,7 +10,7 @@ FlickFinder is a full stack application that utilizes React.JS, Python-Flask, an
 
 - [Node Package Manager](https://nodejs.org/en/learn/getting-started/an-introduction-to-the-npm-package-manager)
 - [Python](https://www.python.org/)
-- [MySQL]([https://www.python.org/](https://www.mysql.com/))
+- [MySQL](https://www.mysql.com/)
 
 ## How to Run
 - Fork this repository

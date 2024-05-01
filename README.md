@@ -23,9 +23,11 @@ FlickFinder is a full stack application that utilizes React.JS, Python-Flask, an
 
 ### Backend
 - Navigate to backend_server.py and backend_func.py to update the database configuration with your information
-- Run data_importer.py
-- Run recommender_alg.py (takes roughly 45 mins)
-- 
+- Install the following Python Packages (pandas, numpy, AST, SciKit Learn, NLTK, TQDM)
+- Run ```python backend/data_importer.py```
+- Run ``` python backend/recommender_alg.py``` (takes roughly 45 mins)
+- Install the following Python Packages (flask_cors, flask_restful, flask_bcrpyt, flask_login, flask_mysqldb)
+- Run ```python backend/backend_server.py``` to run backend instance on your localhost
 
 Group # 1 
 

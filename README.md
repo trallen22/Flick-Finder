@@ -22,6 +22,9 @@ FlickFinder is a full stack application that utilizes React.JS, Python-Flask, an
 - Run ```npm start``` to run Frontend instance on your localhost
 
 ### Backend
+- Navigate to backend_server.py and backend_func.py to update the database configuration with your information
+- Run data_importer.py
+- Run recommender_alg.py (takes roughly 45 mins)
 - 
 
 Group # 1 

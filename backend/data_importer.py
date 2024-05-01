@@ -1,5 +1,5 @@
 ''' 
-authors: Tristan Allen, Will Cox, Daniel Carter, and Josiah Jackson
+authors: Tristan Allen, Will Cox, and Daniel Carter 
 
 reads data from the NFL Play by Play csv and 
 imports it into a sql database NFLdata 
@@ -14,11 +14,9 @@ from tqdm import tqdm
 
 HOST = 'localhost'
 USER = 'root'
-# PASSWORD = '123456'
 DATABASE = "FlickFinder"
 META_FILENAME = "movie-data-csv/movies_metadata.csv"
 KEYWORD_FILENAME = "movie-data-csv/keywords.csv"
-CREDITS_FILENAME = "movie-data-csv/credits.csv"
 # PASSWORD = '123456'
 
 
@@ -36,6 +34,33 @@ def sqlInsert(curCursor, table, curTuple):
 		print(f"failed insert: {curTuple}")
 		print(f"ERROR: {e}")
 
+# # these sets are used to check if values have already been inserted into the table 
+# gameSet = set()
+# playerIDmap = {}
+# playerIDcounter = 1
+# curPlayID = 0 # this keeps track of play_id from table play 
+
+# # playerIDbyName: gets a player id for sql database from a player name. Additionally
+# #					used to update the global variables playerIDmap and playerIDcounter
+# # parameters:
+# # 	playerName - str, name of player of interest 
+# # returns: 
+# # 	curPlayerID - int, player id in sql database 
+# # 	playerIDmap - dict, map of player name and player id -> { B. Roethlisberger: 1 }
+# # 	playerIDcounter+1 - int, adding 1 to increment the counter for AUTO_INCREMENT 
+# def playerIDbyName(playerName):
+# 	# try to get the playerID from the dictionary 
+# 	try: 
+# 		curPlayerID = playerIDmap[playerName]
+# 		nextPlayerIDcounter = playerIDcounter
+# 	# add the player to the dictionary if they aren't already in it 
+# 	except KeyError:
+# 		curPlayerID = playerIDcounter
+# 		nextPlayerIDcounter = playerIDcounter + 1
+# 		playerIDmap[playerName] = curPlayerID
+# 		sqlInsert('player', (curPlayerID, playerName))
+# 	return curPlayerID, playerIDmap, nextPlayerIDcounter
+
 ################
 # Main execution starts here
 ################
@@ -44,26 +69,20 @@ def sqlInsert(curCursor, table, curTuple):
 os.system(f'mysql FlickFinder < "{os.getcwd()}/flick_finder_schema.sql"')
 
 try: 
-	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) #, password=PASSWORD) 
+	connection = mysql.connector.connect(host=HOST, user=USER, database=DATABASE) 
 except Exception as e:
 	print(f'error: {e}')
 	sys.exit()
 
 cursor = connection.cursor()
 
-with open(META_FILENAME, 'r', encoding='utf-8-sig') as metaFile, \
-open(KEYWORD_FILENAME, 'r', encoding='utf-8-sig') as keywordFile, \
-open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
+with open(META_FILENAME, 'r', encoding='utf-8-sig') as metaFile, open(KEYWORD_FILENAME, 'r', encoding='utf-8-sig') as keywordFile:
 	metaCsv = csv.DictReader(metaFile)
 	keywordCsv = csv.DictReader(keywordFile)
-	creditsCsv = csv.DictReader(creditsFile)
 
 	pbar = tqdm(desc='GOING MOVIE BY MOVIE', total=45467) # progress bar to total number of rows in the file 
 
-	for mRow, kRow, cRow in zip(metaCsv, keywordCsv, creditsCsv):
-		if cRow['id'] != mRow['id'] or kRow['id'] != mRow['id']: # TODO: need to clean this up
-			# print(f"m: {mRow['id']}, k: {kRow['id']}, c: {cRow['id']}")
-			pass
+	for mRow, kRow in zip(metaCsv, keywordCsv):
 		# id/title
 		curId = mRow["id"]
 		curTitle = mRow["title"]
@@ -73,18 +92,7 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		for genre in listGenres:
 			curGenres.append(genre["name"])
 		curGenres = f"{curGenres}"
-		# cast 
-		listCast = eval(cRow["cast"])
-		curCast = []
-		for character in listCast:
-			curCast.append(character["name"])
-		curCast = f"{curCast}"
-		#crew
-		listCrew = eval(cRow["crew"])
-		if listCrew:
-			curCrew = listCrew[0]["name"]
-		curCrew = f"{curCrew}"
-		# description (overview)
+		# description
 		curOverview = mRow["overview"]
 		# keywords 
 		listKeywords = eval(kRow["keywords"])
@@ -92,12 +100,7 @@ open(CREDITS_FILENAME, 'r', encoding='utf-8-sig') as creditsFile:
 		for keyword in listKeywords:
 			curKeywords.append(keyword["name"])
 		curKeywords = f"{curKeywords}"
-		# runtime 
-		curRuntime = mRow["runtime"] if mRow["runtime"] != '' else -1
-		# release date
-		curReleaseDate = mRow["release_date"] if mRow["release_date"] != '' else '0001-01-01'
-		curPopularity = mRow["popularity"] if mRow["popularity"] != '' else 0
-		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curCast, curCrew, curOverview, curKeywords, curRuntime, curReleaseDate, curPopularity))
+		sqlInsert(cursor, "movies", (curId, curTitle, curGenres, curOverview, curKeywords))
 		pbar.update(1)
 		
 connection.commit()
@@ -125,4 +128,4 @@ def remove_duplicates_by_column(input_file, output_file, column_name):
                 writer.writerow(row)
 
 # Example usage: Removing duplicates from 'input.csv' based on the 'column_name' and writing to 'output.csv'
-# remove_duplicates_by_column('movie-data-csv/credits.csv', 'movie-data-csv/credits2.csv', 'id')
+# remove_duplicates_by_column('movie-data-csv/test.csv', 'movie-data-csv/test2.csv', 'id')

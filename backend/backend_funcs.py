@@ -276,7 +276,7 @@ def weight_associated_movies(userId:int) -> dict:
 	"""
 	returns sorterd dictionary of movie_id by weight -> { movie_id: weight from recommender }
 	"""
-	WEIGHT_MULTIPLIER = 2
+	WEIGHT_MULTIPLIER = 0.5
 	# TODO: could look into how changing these weights affects recommendations 
 	REC_WEIGHTS = {
 		"rec_one": 10, 
@@ -296,13 +296,13 @@ def weight_associated_movies(userId:int) -> dict:
 	weightedMovieDict = dict() # { movie_id: calculated weight }
 	for curMovAndRecs in assocMovieList:
 		try: 
-			curMovRating = userRatingsDict[curMovAndRecs['movie_id']] - 1
+			curMovRating = userRatingsDict[curMovAndRecs['movie_id']]
 		except KeyError: 
 			# TODO: could look into finding a good default value if movie not already rated 
-			curMovRating = -0.5
+			curMovRating = -0.1
 		for recNum in REC_KEYS:
 			curRecMovieId = curMovAndRecs[recNum]
-			userWeightedCurRec = curMovRating * WEIGHT_MULTIPLIER + REC_WEIGHTS[recNum] 
+			userWeightedCurRec = (curMovRating * WEIGHT_MULTIPLIER * REC_WEIGHTS[recNum] ) ** 2
 			try:
 				weightedMovieDict[curRecMovieId] += userWeightedCurRec
 			except KeyError:

@@ -155,7 +155,6 @@ function Movie() {
                             <Row>
                                 <Col xs={{ span: 12, offset: 1 }} sm={3} lg={2}>
                                     <DropdownButton id="dropdown-basic-button" title="Rate">
-                                    <DropdownButton id="dropdown-basic-button" title="Rate">
                                     <Dropdown.Item onClick={() => { handleRating(5);}}>5</Dropdown.Item>
                                     <Dropdown.Item onClick={() => { handleRating(4.5);}}>4.5</Dropdown.Item>
                                     <Dropdown.Item onClick={() => { handleRating(4);}}>4</Dropdown.Item>
@@ -166,7 +165,6 @@ function Movie() {
                                     <Dropdown.Item onClick={() => { handleRating(1.5);}}>1.5</Dropdown.Item>
                                     <Dropdown.Item onClick={() => { handleRating(1);}}>1</Dropdown.Item>
                                     <Dropdown.Item onClick={() => { handleRating(0.5);}}>0.5</Dropdown.Item>
-                                    </DropdownButton>
                                     </DropdownButton>
                                 </Col>
                                 <Col xs={{span: 12, offset: 1}} sm={2} lg={1}>
